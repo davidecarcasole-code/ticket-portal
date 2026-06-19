@@ -142,6 +142,11 @@ const auth = {
 
 const app = {
   initApp() {
+    if (!getData('_migrated', false)) {
+      setUsers(getUsers());
+      setTickets(getTickets());
+      setData('_migrated', true);
+    }
     this.applyTheme();
     this.applyBg();
     this.populateSelects();
