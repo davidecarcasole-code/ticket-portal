@@ -30,6 +30,18 @@ const CATEGORIES = [
 const PRIORITIES = ['Bassa', 'Media', 'Alta', 'Critica'];
 const STATUSES = ['Aperto', 'In Lavorazione', 'Risolto', 'Chiuso'];
 
+const SEDI = [
+  'Latina - Centro Armonia',
+  'Viterbo',
+  'RSA Flaminia',
+  'MDR Ronciglione',
+  'Marino - Villa Nina',
+  "Catanzaro - Sant'Andrea",
+  'RSA Cori',
+  'RSA Pontina',
+  'Civita',
+];
+
 const THEMES = {
   default: { primary: '#667eea', secondary: '#764ba2', bg: '#0f0f23', card: '#1a1a3e', name: 'Default' },
   ocean: { primary: '#2193b0', secondary: '#6dd5ed', bg: '#0a1628', card: '#0f1f3d', name: 'Oceano' },
@@ -40,20 +52,22 @@ const THEMES = {
 };
 
 const DEFAULT_USERS = [
-  { id: 'u1', username: 'admin', password: 'admin123', name: 'Marco Rossi', role: 'admin' },
-  { id: 'u2', username: 'user', password: 'user123', name: 'Laura Bianchi', role: 'user' },
-  { id: 'u3', username: 'luca', password: 'luca123', name: 'Luca Verdi', role: 'user' },
+  { id: 'u1', username: 'admin', password: 'admin123', name: 'Marco Rossi', role: 'admin', sede: 'Latina - Centro Armonia' },
+  { id: 'u2', username: 'user', password: 'user123', name: 'Laura Bianchi', role: 'user', sede: 'RSA Flaminia' },
+  { id: 'u3', username: 'luca', password: 'luca123', name: 'Luca Verdi', role: 'user', sede: 'Viterbo' },
 ];
 
+function sedeOf(id) { const u = DEFAULT_USERS.find(x => x.id === id); return u ? u.sede : ''; }
+
 const DEFAULT_TICKETS = [
-  { id: 't1', title: 'PC non si accende', description: 'Il computer della reception non mostra segni di vita dopo un aggiornamento di sistema.', category: 'hardware', priority: 'Alta', status: 'Aperto', createdBy: 'u2', assignedTo: 'u1', createdAt: Date.now() - 86400000 * 3, updatedAt: Date.now() - 86400000 * 3, comments: [] },
-  { id: 't2', title: 'Connessione internet lenta', description: 'La connessione di rete nella sede centrale è molto lenta da questa mattina. Velocità inferiore a 1 Mbps.', category: 'rete', priority: 'Media', status: 'In Lavorazione', createdBy: 'u2', assignedTo: 'u1', createdAt: Date.now() - 86400000 * 5, updatedAt: Date.now() - 86400000 * 2, comments: [{ id: 'c1', userId: 'u1', text: 'Stiamo verificando con il provider. Possibile problema di banda.', date: Date.now() - 86400000 * 2 }] },
-  { id: 't3', title: 'Errore programma fatturazione', description: 'Il software di fatturazione restituisce errore 0x45A durante l\'elaborazione delle fatture del mese corrente.', category: 'applicativi', priority: 'Critica', status: 'Aperto', createdBy: 'u3', assignedTo: 'u1', createdAt: Date.now() - 86400000 * 1, updatedAt: Date.now() - 86400000 * 1, comments: [] },
-  { id: 't4', title: 'Casella email piena', description: 'La casella di posta info@azienda.com ha superato il limite di spazio. Richiesta espansione.', category: 'posta', priority: 'Bassa', status: 'Risolto', createdBy: 'u3', assignedTo: 'u1', createdAt: Date.now() - 86400000 * 10, updatedAt: Date.now() - 86400000 * 7, comments: [{ id: 'c2', userId: 'u1', text: 'Spazio espanso a 10GB. Problema risolto.', date: Date.now() - 86400000 * 7 }] },
-  { id: 't5', title: 'Richiesta nuovo account VPN', description: 'Servono credenziali VPN per il nuovo collaboratore Michele Neri (reparto vendite).', category: 'sicurezza', priority: 'Media', status: 'Chiuso', createdBy: 'u2', assignedTo: 'u1', createdAt: Date.now() - 86400000 * 15, updatedAt: Date.now() - 86400000 * 12, comments: [{ id: 'c3', userId: 'u1', text: 'Account creato e credenziali inviate via email.', date: Date.now() - 86400000 * 12 }] },
-  { id: 't6', title: 'Stampante non risponde', description: 'La stampante di rete nel reparto contabilità non risponde ai comandi di stampa.', category: 'hardware', priority: 'Media', status: 'In Lavorazione', createdBy: 'u2', assignedTo: 'u1', createdAt: Date.now() - 86400000 * 2, updatedAt: Date.now() - 86400000 * 1, comments: [{ id: 'c4', userId: 'u1', text: 'Driver reinstallati. In attesa di test.', date: Date.now() - 86400000 * 1 }] },
-  { id: 't7', title: 'Richiesta formato data errato', description: 'Il gestionale mostra le date in formato americano (MM/DD/YYYY) anziché italiano (DD/MM/YYYY).', category: 'applicativi', priority: 'Bassa', status: 'Aperto', createdBy: 'u3', assignedTo: '', createdAt: Date.now() - 86400000 * 0.5, updatedAt: Date.now() - 86400000 * 0.5, comments: [] },
-  { id: 't8', title: 'Blocco account utente', description: 'Account bloccato dopo 3 tentativi di accesso falliti. Sbloccare l\'account.', category: 'sicurezza', priority: 'Alta', status: 'Risolto', createdBy: 'u2', assignedTo: 'u1', createdAt: Date.now() - 86400000 * 20, updatedAt: Date.now() - 86400000 * 18, comments: [{ id: 'c5', userId: 'u1', text: 'Account sbloccato. Password resettata.', date: Date.now() - 86400000 * 18 }] },
+  { id: 't1', title: 'PC non si accende', description: 'Il computer della reception non mostra segni di vita dopo un aggiornamento di sistema.', category: 'hardware', priority: 'Alta', status: 'Aperto', createdBy: 'u2', assignedTo: 'u1', sede: sedeOf('u2'), createdAt: Date.now() - 86400000 * 3, updatedAt: Date.now() - 86400000 * 3, comments: [] },
+  { id: 't2', title: 'Connessione internet lenta', description: 'La connessione di rete nella sede centrale è molto lenta da questa mattina. Velocità inferiore a 1 Mbps.', category: 'rete', priority: 'Media', status: 'In Lavorazione', createdBy: 'u2', assignedTo: 'u1', sede: sedeOf('u2'), createdAt: Date.now() - 86400000 * 5, updatedAt: Date.now() - 86400000 * 2, comments: [{ id: 'c1', userId: 'u1', text: 'Stiamo verificando con il provider. Possibile problema di banda.', date: Date.now() - 86400000 * 2 }] },
+  { id: 't3', title: 'Errore programma fatturazione', description: 'Il software di fatturazione restituisce errore 0x45A durante l\'elaborazione delle fatture del mese corrente.', category: 'applicativi', priority: 'Critica', status: 'Aperto', createdBy: 'u3', assignedTo: 'u1', sede: sedeOf('u3'), createdAt: Date.now() - 86400000 * 1, updatedAt: Date.now() - 86400000 * 1, comments: [] },
+  { id: 't4', title: 'Casella email piena', description: 'La casella di posta info@azienda.com ha superato il limite di spazio. Richiesta espansione.', category: 'posta', priority: 'Bassa', status: 'Risolto', createdBy: 'u3', assignedTo: 'u1', sede: sedeOf('u3'), createdAt: Date.now() - 86400000 * 10, updatedAt: Date.now() - 86400000 * 7, comments: [{ id: 'c2', userId: 'u1', text: 'Spazio espanso a 10GB. Problema risolto.', date: Date.now() - 86400000 * 7 }] },
+  { id: 't5', title: 'Richiesta nuovo account VPN', description: 'Servono credenziali VPN per il nuovo collaboratore Michele Neri (reparto vendite).', category: 'sicurezza', priority: 'Media', status: 'Chiuso', createdBy: 'u2', assignedTo: 'u1', sede: sedeOf('u2'), createdAt: Date.now() - 86400000 * 15, updatedAt: Date.now() - 86400000 * 12, comments: [{ id: 'c3', userId: 'u1', text: 'Account creato e credenziali inviate via email.', date: Date.now() - 86400000 * 12 }] },
+  { id: 't6', title: 'Stampante non risponde', description: 'La stampante di rete nel reparto contabilità non risponde ai comandi di stampa.', category: 'hardware', priority: 'Media', status: 'In Lavorazione', createdBy: 'u2', assignedTo: 'u1', sede: sedeOf('u2'), createdAt: Date.now() - 86400000 * 2, updatedAt: Date.now() - 86400000 * 1, comments: [{ id: 'c4', userId: 'u1', text: 'Driver reinstallati. In attesa di test.', date: Date.now() - 86400000 * 1 }] },
+  { id: 't7', title: 'Richiesta formato data errato', description: 'Il gestionale mostra le date in formato americano (MM/DD/YYYY) anziché italiano (DD/MM/YYYY).', category: 'applicativi', priority: 'Bassa', status: 'Aperto', createdBy: 'u3', assignedTo: '', sede: sedeOf('u3'), createdAt: Date.now() - 86400000 * 0.5, updatedAt: Date.now() - 86400000 * 0.5, comments: [] },
+  { id: 't8', title: 'Blocco account utente', description: 'Account bloccato dopo 3 tentativi di accesso falliti. Sbloccare l\'account.', category: 'sicurezza', priority: 'Alta', status: 'Risolto', createdBy: 'u2', assignedTo: 'u1', sede: sedeOf('u2'), createdAt: Date.now() - 86400000 * 20, updatedAt: Date.now() - 86400000 * 18, comments: [{ id: 'c5', userId: 'u1', text: 'Account sbloccato. Password resettata.', date: Date.now() - 86400000 * 18 }] },
 ];
 
 let currentUser = null;
@@ -131,6 +145,8 @@ const app = {
     document.getElementById('userAvatar').textContent = initials;
     document.getElementById('userName').textContent = currentUser.name;
     document.getElementById('userRole').textContent = currentUser.role === 'admin' ? 'Administrator' : 'User';
+    const sedeEl = document.getElementById('userSede');
+    if (sedeEl) sedeEl.textContent = currentUser.sede || '';
     const badge = document.getElementById('ticketBadge');
     const openCount = getTickets().filter(t => t.status === 'Aperto').length;
     badge.textContent = openCount;
@@ -176,6 +192,10 @@ const app = {
     const filterPriority = document.getElementById('filterPriority');
     if (filterPriority) {
       filterPriority.innerHTML = '<option value="">Tutte le priorità</option>' + PRIORITIES.map(p => `<option value="${p}">${p}</option>`).join('');
+    }
+    const filterSede = document.getElementById('filterSede');
+    if (filterSede) {
+      filterSede.innerHTML = '<option value="">Tutte le sedi</option>' + SEDI.map(s => `<option value="${s}">${s}</option>`).join('');
     }
     this.populateAssignees();
   },
@@ -407,6 +427,7 @@ const dashboard = {
           <div class="ticket-meta">
             <span><i class="fas ${cat.icon}" style="color:${cat.color}"></i> ${cat.name}</span>
             <span><i class="fas fa-user"></i> ${user ? user.name : 'Sconosciuto'}</span>
+            ${t.sede ? `<span><i class="fas fa-building"></i> ${t.sede}</span>` : ''}
             <span><i class="fas fa-clock"></i> ${this.timeAgo(t.createdAt)}</span>
             <span class="badge badge-${t.status.toLowerCase().replace(/\s+/g, '')}">${t.status}</span>
             <span class="badge badge-${t.priority.toLowerCase()}">${t.priority}</span>
@@ -466,11 +487,13 @@ const tickets = {
     const cat = document.getElementById('filterCategory').value;
     const status = document.getElementById('filterStatus').value;
     const priority = document.getElementById('filterPriority').value;
+    const sede = document.getElementById('filterSede').value;
     const search = (document.getElementById('ticketSearch').value || '').toLowerCase();
     let list = this.getAll();
     if (cat) list = list.filter(t => t.category === cat);
     if (status) list = list.filter(t => t.status === status);
     if (priority) list = list.filter(t => t.priority === priority);
+    if (sede) list = list.filter(t => t.sede === sede);
     if (search) list = list.filter(t => t.title.toLowerCase().includes(search) || t.description.toLowerCase().includes(search));
     list.sort((a, b) => b.createdAt - a.createdAt);
     this.renderList(list);
@@ -489,6 +512,7 @@ const tickets = {
           <div class="ticket-meta">
             <span><i class="fas ${cat.icon}" style="color:${cat.color}"></i> ${cat.name}</span>
             <span><i class="fas fa-user"></i> ${user ? user.name : 'Sconosciuto'}</span>
+            ${t.sede ? `<span><i class="fas fa-building"></i> ${t.sede}</span>` : ''}
             ${assignee ? `<span><i class="fas fa-user-check"></i> ${assignee.name}</span>` : ''}
             <span><i class="fas fa-clock"></i> ${dashboard.timeAgo(t.createdAt)}</span>
             <span class="badge badge-${t.status.toLowerCase().replace(/\s+/g, '')}">${t.status}</span>
@@ -504,6 +528,12 @@ const tickets = {
   prepareForm() {
     document.getElementById('ticketForm').reset();
     app.populateAssignees();
+    const sedeSel = document.getElementById('ticketSede');
+    if (sedeSel) {
+      sedeSel.innerHTML = '<option value="">Seleziona sede</option>' + SEDI.map(s => `<option value="${s}" ${currentUser.sede === s ? 'selected' : ''}>${s}</option>`).join('');
+      if (currentUser.role === 'admin') sedeSel.value = '';
+      else sedeSel.value = currentUser.sede || '';
+    }
     if (currentUser.role === 'admin') {
       document.getElementById('ticketAssignee').closest('.form-group').style.display = 'block';
     } else {
@@ -516,12 +546,16 @@ const tickets = {
     const category = document.getElementById('ticketCategory').value;
     const priority = document.getElementById('ticketPriority').value;
     const description = document.getElementById('ticketDescription').value.trim();
+    let sede = document.getElementById('ticketSede').value;
     let assignedTo = document.getElementById('ticketAssignee').value;
-    if (currentUser.role !== 'admin') assignedTo = '';
+    if (currentUser.role !== 'admin') {
+      assignedTo = '';
+      sede = currentUser.sede || '';
+    }
     if (!title || !description) { app.toast('Compila tutti i campi obbligatori', 'error'); return; }
     const ticket = {
       id: uid(),
-      title, description, category, priority,
+      title, description, category, priority, sede,
       status: 'Aperto',
       createdBy: currentUser.id,
       assignedTo,
@@ -562,6 +596,7 @@ const tickets = {
           <span><i class="fas ${cat.icon}" style="color:${cat.color}"></i> ${cat.name}</span>
           <span class="badge badge-${t.priority.toLowerCase()}"><i class="fas fa-flag"></i> ${t.priority}</span>
           <span><i class="fas fa-user"></i> ${user ? user.name : 'Sconosciuto'}</span>
+          ${t.sede ? `<span><i class="fas fa-building"></i> ${t.sede}</span>` : ''}
           ${assignee ? `<span><i class="fas fa-user-check"></i> Assegnato: ${assignee.name}</span>` : '<span style="color:var(--text-secondary)"><i class="fas fa-user-times"></i> Non assegnato</span>'}
         </div>
         <div class="ticket-detail-body">
@@ -646,6 +681,7 @@ const users = {
         <div class="user-card-info">
           <h4>${u.name}</h4>
           <p><i class="fas fa-user${u.role === 'admin' ? '-shield' : ''}"></i> ${u.role === 'admin' ? 'Administrator' : 'User'} &middot; @${u.username}</p>
+          ${u.sede ? `<p style="font-size:0.75rem;color:var(--text-secondary);margin-top:2px"><i class="fas fa-building"></i> ${u.sede}</p>` : ''}
         </div>
         <div class="user-card-actions">
           <button onclick="users.edit('${u.id}')" title="Modifica"><i class="fas fa-edit"></i></button>
@@ -660,6 +696,11 @@ const users = {
     document.getElementById('editUserUsername').value = data ? data.username : '';
     document.getElementById('editUserPassword').value = '';
     document.getElementById('editUserRole').value = data ? data.role : 'user';
+    const sedeSel = document.getElementById('editUserSede');
+    if (sedeSel) {
+      sedeSel.innerHTML = '<option value="">Nessuna sede</option>' + SEDI.map(s => `<option value="${s}" ${data && data.sede === s ? 'selected' : ''}>${s}</option>`).join('');
+      if (data) sedeSel.value = data.sede || '';
+    }
     document.getElementById('userModalTitle').textContent = data ? 'Modifica Utente' : 'Nuovo Utente';
     app.showModal('userModal');
   },
@@ -675,6 +716,7 @@ const users = {
     const username = document.getElementById('editUserUsername').value.trim();
     const password = document.getElementById('editUserPassword').value.trim();
     const role = document.getElementById('editUserRole').value;
+    const sede = document.getElementById('editUserSede').value;
     if (!name || !username) { app.toast('Compila tutti i campi', 'error'); return; }
     const list = getUsers();
     if (id) {
@@ -684,11 +726,12 @@ const users = {
       list[idx].name = name;
       list[idx].username = username;
       list[idx].role = role;
+      list[idx].sede = sede;
       app.toast('Utente aggiornato', 'success');
     } else {
       if (!password) { app.toast('Password richiesta', 'error'); return; }
       if (list.find(u => u.username === username)) { app.toast('Username già esistente', 'error'); return; }
-      list.push({ id: uid(), username, password, name, role });
+      list.push({ id: uid(), username, password, name, role, sede });
       app.toast('Utente creato', 'success');
     }
     setUsers(list);
