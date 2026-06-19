@@ -185,8 +185,16 @@ const auth = {
     if (!bg) return;
     if (img.url) {
       if (container) {
-        container.style.backgroundImage = `url(${img.url})`;
-        container.classList.add('active');
+        if (container.classList.contains('active')) {
+          container.classList.remove('active');
+          setTimeout(() => {
+            container.style.backgroundImage = `url(${img.url})`;
+            container.classList.add('active');
+          }, 2200);
+        } else {
+          container.style.backgroundImage = `url(${img.url})`;
+          container.classList.add('active');
+        }
       }
       bg.style.background = '';
       if (credit) credit.textContent = img.credit;
