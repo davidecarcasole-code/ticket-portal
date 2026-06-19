@@ -108,6 +108,12 @@ function setBg(v) { setData('bg', v); }
 function getDark() { return getData('dark', true); }
 function setDark(v) { setData('dark', v); }
 
+function getNotifs() { return getData('notifs', []); }
+function setNotifs(v) { setData('notifs', v); }
+
+function getEmailCfg() { return getData('emailCfg', { key: '', service: '', template: '', to: '' }); }
+function setEmailCfg(v) { setData('emailCfg', v); }
+
 function getUser(id) { return getUsers().find(u => u.id === id); }
 function getUserByUsername(u) { return getUsers().find(x => x.username === u); }
 
@@ -153,11 +159,24 @@ const app = {
     this.updateUserUI();
     this.navigate('dashboard');
     this.setupKeyboard();
+    notify.init();
+    this.loadEmailJSConfig();
     setTimeout(() => dashboard.render(), 100);
     if (!currentUser) return;
     document.querySelectorAll('.admin-only').forEach(el => {
       el.classList.toggle('hidden', currentUser.role !== 'admin');
     });
+  },
+  loadEmailJSConfig() {
+    const cfg = getEmailCfg();
+    const keyEl = document.getElementById('emailjsKey');
+    const svcEl = document.getElementById('emailjsService');
+    const tplEl = document.getElementById('emailjsTemplate');
+    const toEl = document.getElementById('emailjsTo');
+    if (keyEl) keyEl.value = cfg.key || '';
+    if (svcEl) svcEl.value = cfg.service || '';
+    if (tplEl) tplEl.value = cfg.template || '';
+    if (toEl) toEl.value = cfg.to || '';
   },
   updateUserUI() {
     if (!currentUser) return;
@@ -266,6 +285,48 @@ const app = {
     dashboard.renderCustomizePanel();
   },
   closeCustomizePanel() { document.getElementById('customizePanel').classList.add('hidden'); },
+  openNotifications() {
+    notify.renderModal();
+    app.showModal('notifModal');
+  },
+  saveEmailJSConfig() {
+    setEmailCfg({
+      key: document.getElementById('emailjsKey').value.trim(),
+      service: document.getElementById('emailjsService').value.trim(),
+      template: document.getElementById('emailjsTemplate').value.trim(),
+      to: document.getElementById('emailjsTo').value.trim(),
+    });
+    const cfg = getEmailCfg();
+    if (cfg.key) { try { emailjs.init(cfg.key); } catch(e) {} }
+    app.toast('Configurazione email salvata', 'success');
+  },
+  async testEmail() {
+    const cfg = getEmailCfg();
+    if (!cfg.key || !cfg.service || !cfg.template || !cfg.to) {
+      app.toast('Completa prima la configurazione EmailJS', 'error');
+      return;
+    }
+    try {
+      await emailjs.send(cfg.service, cfg.template, {
+        to_name: 'Test',
+        to_email: cfg.to,
+        from_name: 'TicketFlow',
+        from_sede: 'Test Sede',
+        from_ip: '0.0.0.0',
+        ticket_title: 'Email di prova',
+        ticket_category: 'Test',
+        ticket_priority: 'Bassa',
+        ticket_description: 'Questa è una email di prova da TicketFlow.',
+        ticket_date: new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        message: 'Email di prova da TicketFlow'
+      });
+      document.getElementById('emailjsStatus').textContent = 'Email di prova inviata!';
+      app.toast('Email di prova inviata!', 'success');
+    } catch (err) {
+      document.getElementById('emailjsStatus').textContent = 'Errore: ' + (err.text || err.message);
+      app.toast('Errore invio: ' + (err.text || err.message), 'error');
+    }
+  },
   toggleFullscreen() {
     if (!document.fullscreenElement) document.documentElement.requestFullscreen();
     else document.exitFullscreen();
@@ -587,6 +648,7 @@ const tickets = {
     list.unshift(ticket);
     setTickets(list);
     app.toast('Ticket creato con successo!', 'success');
+    if (currentUser.role !== 'admin') notify.sendTicketAlert(ticket);
     app.navigate('tickets');
   },
   showDetail(id) {
@@ -770,10 +832,87 @@ const users = {
   }
 };
 
+const notify = {
+  init() {
+    const cfg = getEmailCfg();
+    if (cfg.key) {
+      try { emailjs.init(cfg.key); } catch(e) {}
+    }
+    this.updateBadge();
+  },
+  updateBadge() {
+    const badge = document.getElementById('notifBadge');
+    if (!badge) return;
+    const unread = getNotifs().filter(n => !n.read).length;
+    badge.textContent = unread;
+    badge.classList.toggle('hidden', unread === 0);
+  },
+  add(title, msg, type = 'info') {
+    const list = getNotifs();
+    list.unshift({ id: uid(), title, msg, type, date: Date.now(), read: false });
+    setNotifs(list.slice(0, 100));
+    this.updateBadge();
+  },
+  async sendTicketAlert(ticket) {
+    const cfg = getEmailCfg();
+    if (!cfg.key || !cfg.service || !cfg.template || !cfg.to) {
+      this.add('Notifica non inviata', 'Configura EmailJS nelle Impostazioni per ricevere email', 'warning');
+      return;
+    }
+    try {
+      const ipResp = await fetch('https://api.ipify.org?format=json').catch(() => ({ json: () => ({ ip: 'N/D' }) }));
+      const ipData = await ipResp.json();
+      const clientIP = ipData.ip || 'N/D';
+      const user = getUser(ticket.createdBy);
+      const cat = getCategory(ticket.category);
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const admins = getUsers().filter(u => u.role === 'admin');
+      const templateParams = {
+        to_name: admins.map(a => a.name).join(', '),
+        to_email: cfg.to,
+        from_name: user ? user.name : 'Sconosciuto',
+        from_sede: ticket.sede || 'N/D',
+        from_ip: clientIP,
+        ticket_title: ticket.title,
+        ticket_category: cat.name,
+        ticket_priority: ticket.priority,
+        ticket_description: ticket.description,
+        ticket_date: dateStr,
+        message: `Nuovo ticket da ${user ? user.name : 'Sconosciuto'} (${ticket.sede || 'N/D'}, IP: ${clientIP})`
+      };
+      await emailjs.send(cfg.service, cfg.template, templateParams);
+      this.add('Email inviata', `Notifica ticket "${ticket.title}" inviata a ${cfg.to}`, 'success');
+    } catch (err) {
+      this.add('Errore invio email', err.text || err.message || 'Errore sconosciuto', 'error');
+    }
+  },
+  renderModal() {
+    const list = getNotifs();
+    const body = document.getElementById('notifBody');
+    if (!list.length) { body.innerHTML = '<p class="empty-state">Nessuna notifica</p>'; return; }
+    body.innerHTML = list.map(n => `
+      <div class="ticket-item" style="opacity:${n.read ? 0.6 : 1}">
+        <div class="ticket-priority" style="background:${n.type === 'error' ? 'var(--danger)' : n.type === 'warning' ? 'var(--warning)' : 'var(--success)'};width:4px;min-height:40px;border-radius:2px"></div>
+        <div class="ticket-info">
+          <h4>${n.title}</h4>
+          <div class="ticket-meta">
+            <span>${n.msg}</span>
+            <span><i class="fas fa-clock"></i> ${dashboard.timeAgo(n.date)}</span>
+          </div>
+        </div>
+      </div>
+    `).join('');
+    setNotifs(list.map(n => { n.read = true; return n; }));
+    this.updateBadge();
+  }
+};
+
 window.auth = auth;
 window.app = app;
 window.dashboard = dashboard;
 window.tickets = tickets;
 window.users = users;
+window.notify = notify;
 
 })();

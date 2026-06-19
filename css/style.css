@@ -132,6 +132,7 @@ textarea { resize: vertical; }
 .btn-ghost:hover { background: var(--bg-card-hover); border-color: var(--primary); }
 .btn-icon { background: transparent; border: none; color: var(--text-secondary); padding: 0.5rem; font-size: 1.1rem; cursor: pointer; border-radius: 50%; transition: var(--transition); }
 .btn-icon:hover { background: var(--bg-card-hover); color: var(--text); }
+.notif-badge { position:absolute; top:2px; right:2px; background:var(--danger); color:#fff; font-size:0.6rem; font-weight:700; min-width:16px; height:16px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 4px; }
 .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
 .btn-block { display: flex; width: 100%; justify-content: center; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
