@@ -78,10 +78,25 @@ function uid() { return Date.now().toString(36) + Math.random().toString(36).sub
 function getData(key, def) { try { const d = localStorage.getItem('ticketflow_' + key); return d ? JSON.parse(d) : def; } catch { return def; } }
 function setData(key, val) { localStorage.setItem('ticketflow_' + key, JSON.stringify(val)); }
 
-function getUsers() { return getData('users', DEFAULT_USERS); }
+function migrateUsers(list) {
+  return list.map(u => {
+    if (!u.sede) u.sede = '';
+    return u;
+  });
+}
+function migrateTickets(list) {
+  return list.map(t => {
+    if (!t.sede) {
+      const creator = getUser(t.createdBy);
+      t.sede = creator ? creator.sede || '' : '';
+    }
+    return t;
+  });
+}
+function getUsers() { return migrateUsers(getData('users', DEFAULT_USERS)); }
 function setUsers(v) { setData('users', v); }
 
-function getTickets() { return getData('tickets', DEFAULT_TICKETS); }
+function getTickets() { return migrateTickets(getData('tickets', DEFAULT_TICKETS)); }
 function setTickets(v) { setData('tickets', v); }
 
 function getTheme() { return getData('theme', 'default'); }
