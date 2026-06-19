@@ -59,7 +59,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
   display: flex; align-items: center; justify-content: center; overflow: hidden;
 }
 .login-bg-rotator { position: absolute; inset: 0; transition: opacity 2s ease; background: linear-gradient(135deg, #0f0f23, #1a1a3e); }
-.login-bg-img { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: opacity 2s ease; }
+.login-bg-img { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: opacity 2s ease; filter: blur(8px); transform: scale(1.1); }
 .login-bg-img.active { opacity: 1; }
 .login-bg-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.35); }
 .login-bg-timer { position: absolute; bottom: 20px; right: 20px; width: 48px; height: 48px; z-index: 2; }

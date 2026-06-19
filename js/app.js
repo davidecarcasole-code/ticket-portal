@@ -130,8 +130,8 @@ const auth = {
   bgIdx: 0,
   bgSec: 60,
   startBgRotation() {
-    this.bgSec = 60;
-    this.bgIdx = 0;
+    this.bgSec = 30;
+    this.bgIdx = -1;
     this.bgImages = [];
     const el = document.getElementById('loginBg');
     if (!el) return;
@@ -141,25 +141,25 @@ const auth = {
         <circle cx="24" cy="24" r="20"/>
         <circle class="timer-progress" id="timerProgress" cx="24" cy="24" r="20"
           stroke-dasharray="125.6" stroke-dashoffset="0"/>
-      </svg><span class="timer-label" id="timerLabel">60</span>`;
+      </svg><span class="timer-label" id="timerLabel">30</span>`;
     }
     this.fetchBingImages();
     if (this.bgInterval) clearInterval(this.bgInterval);
-    let sec = 60;
+    let sec = 30;
     const tick = () => {
       sec--;
       const label = document.getElementById('timerLabel');
       const progress = document.getElementById('timerProgress');
       if (label) label.textContent = sec;
-      if (progress) progress.style.strokeDashoffset = 125.6 * (1 - sec / 60);
-      if (sec <= 0) { sec = 60; this.nextBg(); }
+      if (progress) progress.style.strokeDashoffset = 125.6 * (1 - sec / 30);
+      if (sec <= 0) { sec = 30; this.nextBg(); }
     };
     this.bgInterval = setInterval(tick, 1000);
   },
   fetchBingImages() {
     const fallback = () => {
-      const grads = ['#0f0f23,#1a1a3e','#1a0a2e,#2d1b69','#0a1628,#1a3a5c','#1a0a0a,#3d1515'];
-      this.bgImages = grads.map(g => ({ url: '', grad: g, credit: '' }));
+      const ids = Array.from({length: 100}, (_, i) => i + 10);
+      this.bgImages = ids.map(id => ({ url: `https://picsum.photos/id/${id}/1920/1080`, grad: '', credit: '' }));
       this.nextBg();
     };
     fetch('https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=8&mkt=it-IT')
@@ -532,7 +532,10 @@ const app = {
 
 const dashboard = {
   render() {
-    const tickets = getTickets();
+    const allTickets = getTickets();
+    const tickets = currentUser && currentUser.role !== 'admin'
+      ? allTickets.filter(t => t.createdBy === currentUser.id || t.assignedTo === currentUser.id)
+      : allTickets;
     const totale = tickets.length;
     const aperti = tickets.filter(t => t.status === 'Aperto').length;
     const lavorazione = tickets.filter(t => t.status === 'In Lavorazione').length;
