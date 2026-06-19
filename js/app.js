@@ -656,12 +656,11 @@ const users = {
   },
   openModal(data) {
     document.getElementById('userId').value = data ? data.id : '';
-    document.getElementById('userName').value = data ? data.name : '';
-    document.getElementById('userUsername').value = data ? data.username : '';
-    document.getElementById('userPassword').value = '';
-    document.getElementById('userRole').value = data ? data.role : 'user';
+    document.getElementById('editUserName').value = data ? data.name : '';
+    document.getElementById('editUserUsername').value = data ? data.username : '';
+    document.getElementById('editUserPassword').value = '';
+    document.getElementById('editUserRole').value = data ? data.role : 'user';
     document.getElementById('userModalTitle').textContent = data ? 'Modifica Utente' : 'Nuovo Utente';
-    document.getElementById('userPassword').required = !data;
     app.showModal('userModal');
   },
   edit(id) {
@@ -672,10 +671,10 @@ const users = {
   save(e) {
     e.preventDefault();
     const id = document.getElementById('userId').value;
-    const name = document.getElementById('userName').value.trim();
-    const username = document.getElementById('userUsername').value.trim();
-    const password = document.getElementById('userPassword').value.trim();
-    const role = document.getElementById('userRole').value;
+    const name = document.getElementById('editUserName').value.trim();
+    const username = document.getElementById('editUserUsername').value.trim();
+    const password = document.getElementById('editUserPassword').value.trim();
+    const role = document.getElementById('editUserRole').value;
     if (!name || !username) { app.toast('Compila tutti i campi', 'error'); return; }
     const list = getUsers();
     if (id) {

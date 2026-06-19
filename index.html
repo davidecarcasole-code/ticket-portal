@@ -327,10 +327,10 @@
     <div class="modal-body">
       <form id="userForm" onsubmit="users.save(event)">
         <input type="hidden" id="userId">
-        <div class="form-group"><label>Nome Completo</label><input type="text" id="userName" required></div>
-        <div class="form-group"><label>Username</label><input type="text" id="userUsername" required></div>
-        <div class="form-group"><label>Password</label><input type="password" id="userPassword" required></div>
-        <div class="form-group"><label>Ruolo</label><select id="userRole"><option value="user">User</option><option value="admin">Admin</option></select></div>
+        <div class="form-group"><label>Nome Completo</label><input type="text" id="editUserName" required></div>
+        <div class="form-group"><label>Username</label><input type="text" id="editUserUsername" required></div>
+        <div class="form-group"><label>Password</label><input type="password" id="editUserPassword"></div>
+        <div class="form-group"><label>Ruolo</label><select id="editUserRole"><option value="user">User</option><option value="admin">Admin</option></select></div>
         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Salva</button>
       </form>
     </div>
