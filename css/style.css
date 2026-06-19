@@ -110,6 +110,8 @@ input, select, textarea {
   transition: var(--transition); outline: none;
 }
 input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(102,126,234,0.15); }
+select option { background: #1a1a3e; color: #e0e0f0; }
+.light select option { background: #fff; color: #1a1a2e; }
 textarea { resize: vertical; }
 
 /* === BUTTONS === */
