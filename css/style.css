@@ -109,9 +109,13 @@ input, select, textarea {
   background: rgba(255,255,255,0.05); color: var(--text); font-family: inherit; font-size: 0.9rem;
   transition: var(--transition); outline: none;
 }
+select { color-scheme: dark; }
+.light select { color-scheme: light; }
 input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(102,126,234,0.15); }
 select option { background: #1a1a3e; color: #e0e0f0; }
 .light select option { background: #fff; color: #1a1a2e; }
+select::-webkit-listbox { background: #1a1a3e; color: #e0e0f0; }
+.light select::-webkit-listbox { background: #fff; color: #1a1a2e; }
 textarea { resize: vertical; }
 
 /* === BUTTONS === */
