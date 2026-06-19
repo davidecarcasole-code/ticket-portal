@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TicketFlow - Portale Gestione Ticket</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script>document.documentElement.setAttribute('data-theme', localStorage.getItem('ticketflow_theme') || 'default');</script>
+</head>
+<body>
+<div id="app">
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-bg-animation">
+    <div class="bg-shape bg-shape-1"></div>
+    <div class="bg-shape bg-shape-2"></div>
+    <div class="bg-shape bg-shape-3"></div>
+  </div>
+  <div class="login-container">
+    <div class="login-header">
+      <div class="login-logo"><i class="fas fa-ticket-alt"></i> TicketFlow</div>
+      <p class="login-subtitle">Portale di Gestione Ticket</p>
+    </div>
+    <div class="login-box" id="loginBox">
+      <div class="login-tabs">
+        <button class="login-tab active" data-role="admin"><i class="fas fa-user-shield"></i> Admin</button>
+        <button class="login-tab" data-role="user"><i class="fas fa-user"></i> User</button>
+      </div>
+      <div class="login-form">
+        <div class="form-group">
+          <label><i class="fas fa-user"></i> Username</label>
+          <input type="text" id="loginUsername" placeholder="Inserisci username" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-lock"></i> Password</label>
+          <input type="password" id="loginPassword" placeholder="Inserisci password">
+        </div>
+        <button class="btn btn-primary btn-block" id="loginBtn" onclick="auth.login()">
+          <i class="fas fa-sign-in-alt"></i> Accedi
+        </button>
+        <p class="login-error" id="loginError"></p>
+        <div class="login-info">
+          <small><i class="fas fa-info-circle"></i> Demo: admin/admin123 o user/user123</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="main-app hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo"><i class="fas fa-ticket-alt"></i> TicketFlow</div>
+      <button class="sidebar-toggle" onclick="app.toggleSidebar()"><i class="fas fa-bars"></i></button>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" data-view="dashboard" onclick="app.navigate('dashboard')">
+        <i class="fas fa-chart-pie"></i> <span>Dashboard</span>
+      </a>
+      <a class="nav-item" data-view="tickets" onclick="app.navigate('tickets')">
+        <i class="fas fa-tickets"></i> <span>Ticket</span>
+        <span class="nav-badge" id="ticketBadge">0</span>
+      </a>
+      <a class="nav-item" data-view="newticket" onclick="app.navigate('newticket')">
+        <i class="fas fa-plus-circle"></i> <span>Nuovo Ticket</span>
+      </a>
+      <a class="nav-item admin-only hidden" data-view="users" onclick="app.navigate('users')">
+        <i class="fas fa-users-cog"></i> <span>Utenti</span>
+      </a>
+      <a class="nav-item" data-view="settings" onclick="app.navigate('settings')">
+        <i class="fas fa-cog"></i> <span>Impostazioni</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn btn-ghost btn-sm btn-block" onclick="app.toggleTheme()">
+        <i class="fas fa-moon" id="themeIcon"></i> <span>Tema</span>
+      </button>
+      <button class="btn btn-ghost btn-sm btn-block" onclick="auth.logout()">
+        <i class="fas fa-sign-out-alt"></i> <span>Esci</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" onclick="app.toggleSidebar()"><i class="fas fa-bars"></i></button>
+        <div class="topbar-search">
+          <i class="fas fa-search"></i>
+          <input type="text" id="globalSearch" placeholder="Cerca ticket..." oninput="app.globalSearch(this.value)">
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-icon" onclick="app.openCustomizePanel()" title="Personalizza">
+          <i class="fas fa-palette"></i>
+        </button>
+        <button class="btn btn-icon" onclick="app.toggleTheme()" title="Cambia tema">
+          <i class="fas fa-moon" id="topbarThemeIcon"></i>
+        </button>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatar">A</div>
+          <div class="user-info">
+            <span class="user-name" id="userName">Admin</span>
+            <span class="user-role" id="userRole">Administrator</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <div class="page-content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <h1><i class="fas fa-chart-pie"></i> Dashboard</h1>
+          <p>Panoramica dei ticket di supporto</p>
+        </div>
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card stat-totale">
+            <div class="stat-icon"><i class="fas fa-ticket-alt"></i></div>
+            <div class="stat-info"><span class="stat-value" id="statTotale">0</span><span class="stat-label">Totale Ticket</span></div>
+          </div>
+          <div class="stat-card stat-aperti">
+            <div class="stat-icon"><i class="fas fa-folder-open"></i></div>
+            <div class="stat-info"><span class="stat-value" id="statAperti">0</span><span class="stat-label">Aperti</span></div>
+          </div>
+          <div class="stat-card stat-lavorazione">
+            <div class="stat-icon"><i class="fas fa-spinner"></i></div>
+            <div class="stat-info"><span class="stat-value" id="statLavorazione">0</span><span class="stat-label">In Lavorazione</span></div>
+          </div>
+          <div class="stat-card stat-risolti">
+            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-info"><span class="stat-value" id="statRisolti">0</span><span class="stat-label">Risolti</span></div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="card dashboard-chart">
+            <div class="card-header">
+              <h3><i class="fas fa-chart-bar"></i> Ticket per Categoria</h3>
+            </div>
+            <div class="card-body">
+              <canvas id="categoryChart"></canvas>
+            </div>
+          </div>
+          <div class="card dashboard-chart">
+            <div class="card-header">
+              <h3><i class="fas fa-chart-doughnut"></i> Distribuzione Stati</h3>
+            </div>
+            <div class="card-body">
+              <canvas id="statusChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-clock"></i> Ticket Recenti</h3>
+          </div>
+          <div class="card-body" id="recentTickets"><p class="empty-state">Nessun ticket recente</p></div>
+        </div>
+      </div>
+
+      <!-- TICKETS LIST -->
+      <div class="page" id="page-tickets">
+        <div class="page-header">
+          <h1><i class="fas fa-tickets"></i> Ticket</h1>
+          <p>Gestisci tutti i ticket di supporto</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="ticket-filters">
+              <div class="filter-group">
+                <select id="filterCategory" onchange="tickets.applyFilters()"><option value="">Tutte le categorie</option></select>
+                <select id="filterStatus" onchange="tickets.applyFilters()"><option value="">Tutti gli stati</option></select>
+                <select id="filterPriority" onchange="tickets.applyFilters()"><option value="">Tutte le priorità</option></select>
+                <input type="text" id="ticketSearch" placeholder="Cerca..." oninput="tickets.applyFilters()">
+              </div>
+              <button class="btn btn-primary" onclick="app.navigate('newticket')"><i class="fas fa-plus"></i> Nuovo</button>
+            </div>
+          </div>
+          <div class="card-body" id="ticketsList"><p class="empty-state">Nessun ticket trovato</p></div>
+        </div>
+      </div>
+
+      <!-- NEW TICKET -->
+      <div class="page" id="page-newticket">
+        <div class="page-header">
+          <h1><i class="fas fa-plus-circle"></i> Nuovo Ticket</h1>
+          <p>Crea una nuova richiesta di supporto</p>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <form id="ticketForm" onsubmit="tickets.create(event)">
+              <div class="form-row">
+                <div class="form-group">
+                  <label><i class="fas fa-heading"></i> Oggetto</label>
+                  <input type="text" id="ticketTitle" placeholder="Titolo del ticket" required>
+                </div>
+                <div class="form-group">
+                  <label><i class="fas fa-tag"></i> Categoria</label>
+                  <select id="ticketCategory" required></select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label><i class="fas fa-flag"></i> Priorità</label>
+                  <select id="ticketPriority" required>
+                    <option value="Bassa">Bassa</option>
+                    <option value="Media" selected>Media</option>
+                    <option value="Alta">Alta</option>
+                    <option value="Critica">Critica</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label><i class="fas fa-user"></i> Assegnato a</label>
+                  <select id="ticketAssignee"></select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label><i class="fas fa-align-left"></i> Descrizione</label>
+                <textarea id="ticketDescription" rows="6" placeholder="Descrivi il problema..." required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Crea Ticket</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- USERS (Admin only) -->
+      <div class="page" id="page-users">
+        <div class="page-header">
+          <h1><i class="fas fa-users-cog"></i> Gestione Utenti</h1>
+          <p>Amministra gli utenti del sistema</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-list"></i> Elenco Utenti</h3>
+            <button class="btn btn-primary" onclick="app.showModal('userModal')"><i class="fas fa-user-plus"></i> Aggiungi</button>
+          </div>
+          <div class="card-body" id="usersList"></div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="page" id="page-settings">
+        <div class="page-header">
+          <h1><i class="fas fa-cog"></i> Impostazioni</h1>
+          <p>Personalizza il tuo portale</p>
+        </div>
+        <div class="settings-grid">
+          <div class="card">
+            <div class="card-header"><h3><i class="fas fa-palette"></i> Tema Colori</h3></div>
+            <div class="card-body">
+              <div class="theme-grid" id="themeGrid">
+                <button class="theme-btn" data-theme="default" onclick="dashboard.setTheme('default')" style="--c1:#667eea;--c2:#764ba2"><span></span></button>
+                <button class="theme-btn" data-theme="ocean" onclick="dashboard.setTheme('ocean')" style="--c1:#2193b0;--c2:#6dd5ed"><span></span></button>
+                <button class="theme-btn" data-theme="sunset" onclick="dashboard.setTheme('sunset')" style="--c1:#f12711;--c2:#f5af19"><span></span></button>
+                <button class="theme-btn" data-theme="forest" onclick="dashboard.setTheme('forest')" style="--c1:#134e5e;--c2:#71b280"><span></span></button>
+                <button class="theme-btn" data-theme="midnight" onclick="dashboard.setTheme('midnight')" style="--c1:#0f0c29;--c2:#302b63"><span></span></button>
+                <button class="theme-btn" data-theme="candy" onclick="dashboard.setTheme('candy')" style="--c1:#d4145a;--c2:#3bbdc7"><span></span></button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">            <h3><i class="fas fa-paint-roller"></i> Sfondo Dashboard</h3></div>
+            <div class="card-body">
+              <label>Scegli colore sfondo</label>
+              <input type="color" id="bgColorPicker" value="#0f0f23" onchange="dashboard.setBgColor(this.value)">
+              <label class="mt-2">Sfondo graduato</label>
+              <div class="bg-presets" id="bgPresets">
+                <button class="bg-preset" style="background:linear-gradient(135deg,#667eea,#764ba2)" onclick="dashboard.setBgGradient('135deg,#667eea,#764ba2')"></button>
+                <button class="bg-preset" style="background:linear-gradient(135deg,#2193b0,#6dd5ed)" onclick="dashboard.setBgGradient('135deg,#2193b0,#6dd5ed')"></button>
+                <button class="bg-preset" style="background:linear-gradient(135deg,#f12711,#f5af19)" onclick="dashboard.setBgGradient('135deg,#f12711,#f5af19')"></button>
+                <button class="bg-preset" style="background:linear-gradient(135deg,#134e5e,#71b280)" onclick="dashboard.setBgGradient('135deg,#134e5e,#71b280')"></button>
+                <button class="bg-preset" style="background:linear-gradient(135deg,#0f0c29,#302b63)" onclick="dashboard.setBgGradient('135deg,#0f0c29,#302b63')"></button>
+                <button class="bg-preset" style="background:linear-gradient(135deg,#d4145a,#3bbdc7)" onclick="dashboard.setBgGradient('135deg,#d4145a,#3bbdc7')"></button>
+              </div>
+              <button class="btn btn-ghost btn-sm mt-2" onclick="dashboard.resetBg()"><i class="fas fa-undo"></i> Reimposta predefinito</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3><i class="fas fa-moon"></i> Modalità Scura</h3></div>
+            <div class="card-body">
+              <label>Scegli tema scuro o chiaro</label>
+          <label class="switch">
+                <input type="checkbox" id="darkModeToggle" onchange="app.toggleTheme()">
+                <span class="switch-slider"></span>
+              </label>
+              <span id="darkModeLabel">Tema scuro attivo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+
+<!-- Ticket Detail Modal -->
+<div class="modal-overlay hidden" id="ticketDetailModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 id="modalTicketTitle">Dettaglio Ticket</h3>
+      <button class="modal-close" onclick="app.closeModal('ticketDetailModal')">&times;</button>
+    </div>
+    <div class="modal-body" id="ticketDetailBody"></div>
+  </div>
+</div>
+
+<!-- User Modal -->
+<div class="modal-overlay hidden" id="userModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="userModalTitle">Nuovo Utente</h3>
+      <button class="modal-close" onclick="app.closeModal('userModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="userForm" onsubmit="users.save(event)">
+        <input type="hidden" id="userId">
+        <div class="form-group"><label>Nome Completo</label><input type="text" id="userName" required></div>
+        <div class="form-group"><label>Username</label><input type="text" id="userUsername" required></div>
+        <div class="form-group"><label>Password</label><input type="password" id="userPassword" required></div>
+        <div class="form-group"><label>Ruolo</label><select id="userRole"><option value="user">User</option><option value="admin">Admin</option></select></div>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Salva</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Customize Panel -->
+<div class="customize-panel hidden" id="customizePanel">
+  <div class="customize-header">
+    <h3><i class="fas fa-palette"></i> Personalizza</h3>
+    <button class="modal-close" onclick="app.closeCustomizePanel()">&times;</button>
+  </div>
+  <div class="customize-body">
+    <div class="customize-section">
+      <h4>Tema Colori</h4>
+      <div class="theme-grid" id="cThemeGrid"></div>
+    </div>
+    <div class="customize-section">
+      <h4>Sfondo Dashboard</h4>
+      <input type="color" id="cBgColor" onchange="dashboard.setBgColor(this.value)" style="width:100%;height:40px;border:none;cursor:pointer">
+      <div class="bg-presets" id="cBgPresets"></div>
+      <button class="btn btn-ghost btn-sm btn-block" onclick="dashboard.resetBg()">Reimposta</button>
+    </div>
+    <div class="customize-section">
+      <h4>Schermo Intero</h4>
+      <button class="btn btn-ghost btn-block" onclick="app.toggleFullscreen()">
+        <i class="fas fa-expand"></i> Schermo Intero
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast-container" id="toastContainer"></div>
+
+</div>
+<script src="js/app.js"></script>
+</body>
+</html>
