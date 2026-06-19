@@ -15,11 +15,27 @@
 
 <!-- LOGIN SCREEN -->
 <div id="loginScreen" class="login-screen">
-  <div class="login-bg-rotator" id="loginBg"><div class="login-bg-overlay"></div></div>
+  <div class="login-bg-rotator" id="loginBg">
+    <div class="login-bg-img" id="loginBgImg"></div>
+    <div class="login-bg-overlay"></div>
+  </div>
   <div class="login-bg-timer" id="loginBgTimer"></div>
+  <div class="login-bg-credit" id="loginBgCredit"></div>
   <div class="login-container">
     <div class="login-header">
-      <div class="login-logo"><i class="fas fa-ticket-alt"></i> TicketFlow</div>
+      <div class="login-logo">
+        <svg class="logo-svg" viewBox="0 0 48 48" width="48" height="48">
+          <defs>
+            <linearGradient id="gGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="var(--primary, #667eea)"/>
+              <stop offset="100%" stop-color="var(--secondary, #764ba2)"/>
+            </linearGradient>
+          </defs>
+          <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#gGrad)" opacity="0.15"/>
+          <rect x="6" y="6" width="36" height="36" rx="9" fill="none" stroke="url(#gGrad)" stroke-width="2" opacity="0.3"/>
+          <text x="24" y="32" text-anchor="middle" font-size="26" font-weight="800" font-family="Inter,sans-serif" fill="url(#gGrad)">G</text>
+        </svg>
+        TicketFlow</div>
       <p class="login-subtitle">Portale di Gestione Ticket</p>
     </div>
     <div class="login-box" id="loginBox">
@@ -51,7 +67,13 @@
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <div class="sidebar-logo"><i class="fas fa-ticket-alt"></i> TicketFlow</div>
+      <div class="sidebar-logo">
+        <svg class="logo-svg-sm" viewBox="0 0 48 48" width="28" height="28" style="vertical-align:middle;margin-right:6px">
+          <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#gGrad)" opacity="0.15"/>
+          <rect x="6" y="6" width="36" height="36" rx="9" fill="none" stroke="url(#gGrad)" stroke-width="2" opacity="0.3"/>
+          <text x="24" y="32" text-anchor="middle" font-size="26" font-weight="800" font-family="Inter,sans-serif" fill="url(#gGrad)">G</text>
+        </svg>
+        TicketFlow</div>
       <button class="sidebar-toggle" onclick="app.toggleSidebar()"><i class="fas fa-bars"></i></button>
     </div>
     <nav class="sidebar-nav">

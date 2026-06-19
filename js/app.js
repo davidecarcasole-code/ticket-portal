@@ -124,30 +124,17 @@ function getUserName(id) { const u = getUser(id); return u ? u.name : 'Sconosciu
 
 function getCategory(id) { return CATEGORIES.find(c => c.id === id) || { name: id, icon: 'fa-tag', color: '#999' }; }
 
-const LOGIN_BGS = [
-  '135deg, #0f0f23, #1a1a3e',
-  '135deg, #1a0a2e, #2d1b69',
-  '135deg, #0a1628, #1a3a5c',
-  '135deg, #1a0a0a, #3d1515',
-  '135deg, #0a1a10, #1a3d28',
-  '135deg, #100a1a, #2a1545',
-  '135deg, #0a0a1a, #1a2a4a',
-  '135deg, #1a100a, #3d2a15',
-];
-
 const auth = {
+  bgImages: [],
   bgInterval: null,
-  bgTimer: null,
-  bgIndex: 0,
+  bgIdx: 0,
+  bgSec: 60,
   startBgRotation() {
-    this.bgIndex = 0;
+    this.bgSec = 60;
+    this.bgIdx = 0;
+    this.bgImages = [];
     const el = document.getElementById('loginBg');
     if (!el) return;
-    const switchBg = () => {
-      this.bgIndex = (this.bgIndex + 1) % LOGIN_BGS.length;
-      el.style.background = `linear-gradient(${LOGIN_BGS[this.bgIndex]})`;
-    };
-    switchBg();
     const timerContainer = document.getElementById('loginBgTimer');
     if (timerContainer) {
       timerContainer.innerHTML = `<svg viewBox="0 0 48 48" width="48" height="48">
@@ -156,18 +143,58 @@ const auth = {
           stroke-dasharray="125.6" stroke-dashoffset="0"/>
       </svg><span class="timer-label" id="timerLabel">60</span>`;
     }
+    this.fetchBingImages();
     if (this.bgInterval) clearInterval(this.bgInterval);
-    if (this.bgTimer) clearInterval(this.bgTimer);
     let sec = 60;
-    const updateTimer = () => {
+    const tick = () => {
       sec--;
       const label = document.getElementById('timerLabel');
       const progress = document.getElementById('timerProgress');
       if (label) label.textContent = sec;
       if (progress) progress.style.strokeDashoffset = 125.6 * (1 - sec / 60);
-      if (sec <= 0) { sec = 60; switchBg(); }
+      if (sec <= 0) { sec = 60; this.nextBg(); }
     };
-    this.bgInterval = setInterval(updateTimer, 1000);
+    this.bgInterval = setInterval(tick, 1000);
+  },
+  fetchBingImages() {
+    const fallback = () => {
+      const grads = ['#0f0f23,#1a1a3e','#1a0a2e,#2d1b69','#0a1628,#1a3a5c','#1a0a0a,#3d1515'];
+      this.bgImages = grads.map(g => ({ url: '', grad: g, credit: '' }));
+      this.nextBg();
+    };
+    fetch('https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=8&mkt=it-IT')
+      .then(r => r.json())
+      .then(data => {
+        if (!data || !data.images || !data.images.length) { fallback(); return; }
+        this.bgImages = data.images.map(img => ({
+          url: 'https://www.bing.com' + img.url,
+          grad: '',
+          credit: img.copyright || ''
+        }));
+        this.nextBg();
+      })
+      .catch(() => fallback());
+  },
+  nextBg() {
+    if (!this.bgImages.length) return;
+    this.bgIdx = (this.bgIdx + 1) % this.bgImages.length;
+    const img = this.bgImages[this.bgIdx];
+    const container = document.getElementById('loginBgImg');
+    const bg = document.getElementById('loginBg');
+    const credit = document.getElementById('loginBgCredit');
+    if (!bg) return;
+    if (img.url) {
+      if (container) {
+        container.style.backgroundImage = `url(${img.url})`;
+        container.classList.add('active');
+      }
+      bg.style.background = '';
+      if (credit) credit.textContent = img.credit;
+    } else if (img.grad) {
+      if (container) container.classList.remove('active');
+      bg.style.background = `linear-gradient(135deg, ${img.grad})`;
+      if (credit) credit.textContent = '';
+    }
   },
   stopBgRotation() {
     if (this.bgInterval) { clearInterval(this.bgInterval); this.bgInterval = null; }
