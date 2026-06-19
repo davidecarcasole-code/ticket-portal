@@ -30,7 +30,7 @@ const CATEGORIES = [
 const PRIORITIES = ['Bassa', 'Media', 'Alta', 'Critica'];
 const STATUSES = ['Aperto', 'In Lavorazione', 'Risolto', 'Chiuso'];
 
-const SEDI = [
+const DEFAULT_SEDI = [
   'Latina - Centro Armonia',
   'Viterbo',
   'RSA Flaminia',
@@ -108,6 +108,9 @@ function setBg(v) { setData('bg', v); }
 function getDark() { return getData('dark', true); }
 function setDark(v) { setData('dark', v); }
 
+function getSedi() { return getData('sedi', DEFAULT_SEDI); }
+function setSedi(v) { setData('sedi', v); }
+
 function getNotifs() { return getData('notifs', []); }
 function setNotifs(v) { setData('notifs', v); }
 
@@ -121,7 +124,54 @@ function getUserName(id) { const u = getUser(id); return u ? u.name : 'Sconosciu
 
 function getCategory(id) { return CATEGORIES.find(c => c.id === id) || { name: id, icon: 'fa-tag', color: '#999' }; }
 
+const LOGIN_BGS = [
+  '135deg, #0f0f23, #1a1a3e',
+  '135deg, #1a0a2e, #2d1b69',
+  '135deg, #0a1628, #1a3a5c',
+  '135deg, #1a0a0a, #3d1515',
+  '135deg, #0a1a10, #1a3d28',
+  '135deg, #100a1a, #2a1545',
+  '135deg, #0a0a1a, #1a2a4a',
+  '135deg, #1a100a, #3d2a15',
+];
+
 const auth = {
+  bgInterval: null,
+  bgTimer: null,
+  bgIndex: 0,
+  startBgRotation() {
+    this.bgIndex = 0;
+    const el = document.getElementById('loginBg');
+    if (!el) return;
+    const switchBg = () => {
+      this.bgIndex = (this.bgIndex + 1) % LOGIN_BGS.length;
+      el.style.background = `linear-gradient(${LOGIN_BGS[this.bgIndex]})`;
+    };
+    switchBg();
+    const timerContainer = document.getElementById('loginBgTimer');
+    if (timerContainer) {
+      timerContainer.innerHTML = `<svg viewBox="0 0 48 48" width="48" height="48">
+        <circle cx="24" cy="24" r="20"/>
+        <circle class="timer-progress" id="timerProgress" cx="24" cy="24" r="20"
+          stroke-dasharray="125.6" stroke-dashoffset="0"/>
+      </svg><span class="timer-label" id="timerLabel">60</span>`;
+    }
+    if (this.bgInterval) clearInterval(this.bgInterval);
+    if (this.bgTimer) clearInterval(this.bgTimer);
+    let sec = 60;
+    const updateTimer = () => {
+      sec--;
+      const label = document.getElementById('timerLabel');
+      const progress = document.getElementById('timerProgress');
+      if (label) label.textContent = sec;
+      if (progress) progress.style.strokeDashoffset = 125.6 * (1 - sec / 60);
+      if (sec <= 0) { sec = 60; switchBg(); }
+    };
+    this.bgInterval = setInterval(updateTimer, 1000);
+  },
+  stopBgRotation() {
+    if (this.bgInterval) { clearInterval(this.bgInterval); this.bgInterval = null; }
+  },
   login() {
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
@@ -135,6 +185,7 @@ const auth = {
     errEl.textContent = '';
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('mainApp').classList.remove('hidden');
+    this.stopBgRotation();
     app.initApp();
   },
   logout() {
@@ -143,6 +194,7 @@ const auth = {
     document.getElementById('mainApp').classList.add('hidden');
     document.getElementById('loginUsername').value = '';
     document.getElementById('loginPassword').value = '';
+    this.startBgRotation();
   }
 };
 
@@ -166,6 +218,7 @@ const app = {
     document.querySelectorAll('.admin-only').forEach(el => {
       el.classList.toggle('hidden', currentUser.role !== 'admin');
     });
+    if (currentUser.role === 'admin') this.renderSedi();
   },
   loadEmailJSConfig() {
     const cfg = getEmailCfg();
@@ -177,6 +230,67 @@ const app = {
     if (svcEl) svcEl.value = cfg.service || '';
     if (tplEl) tplEl.value = cfg.template || '';
     if (toEl) toEl.value = cfg.to || '';
+  },
+  renderSedi() {
+    const list = getSedi();
+    const el = document.getElementById('sedeList');
+    if (!el) return;
+    el.innerHTML = list.map((s, i) => `
+      <div class="ticket-item">
+        <div class="ticket-info">
+          <h4 style="display:flex;align-items:center;gap:0.5rem"><i class="fas fa-building" style="color:var(--primary)"></i> ${s}</h4>
+        </div>
+        <div class="ticket-actions">
+          <button onclick="app.renameSede(${i})" title="Rinomina"><i class="fas fa-edit"></i></button>
+          <button class="delete-btn" onclick="app.deleteSede(${i})" title="Elimina"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    `).join('');
+  },
+  addSede() {
+    const name = prompt('Nuova sede:');
+    if (!name || !name.trim()) return;
+    const list = getSedi();
+    if (list.includes(name.trim())) { app.toast('Sede già esistente', 'error'); return; }
+    list.push(name.trim());
+    setSedi(list);
+    this.renderSedi();
+    app.populateSelects();
+    app.toast('Sede aggiunta', 'success');
+  },
+  renameSede(idx) {
+    const list = getSedi();
+    const name = prompt('Nuovo nome:', list[idx]);
+    if (!name || !name.trim() || name.trim() === list[idx]) return;
+    if (list.includes(name.trim())) { app.toast('Sede già esistente', 'error'); return; }
+    const old = list[idx];
+    list[idx] = name.trim();
+    setSedi(list);
+    let users = getUsers();
+    users.forEach(u => { if (u.sede === old) u.sede = name.trim(); });
+    setUsers(users);
+    let tickets = getTickets();
+    tickets.forEach(t => { if (t.sede === old) t.sede = name.trim(); });
+    setTickets(tickets);
+    this.renderSedi();
+    app.populateSelects();
+    app.toast('Sede rinominata', 'success');
+  },
+  deleteSede(idx) {
+    const list = getSedi();
+    const name = list[idx];
+    if (!app.confirm(`Eliminare "${name}"? Gli utenti e ticket associati perderanno la sede.`)) return;
+    list.splice(idx, 1);
+    setSedi(list);
+    let users = getUsers();
+    users.forEach(u => { if (u.sede === name) u.sede = ''; });
+    setUsers(users);
+    let tickets = getTickets();
+    tickets.forEach(t => { if (t.sede === name) t.sede = ''; });
+    setTickets(tickets);
+    this.renderSedi();
+    app.populateSelects();
+    app.toast('Sede eliminata', 'success');
   },
   updateUserUI() {
     if (!currentUser) return;
@@ -204,6 +318,7 @@ const app = {
     if (view === 'tickets') tickets.render();
     if (view === 'users') users.render();
     if (view === 'newticket') tickets.prepareForm();
+    if (view === 'settings') { this.loadEmailJSConfig(); this.renderSedi(); }
     this.closeCustomizePanel();
     if (window.innerWidth <= 768) this.closeSidebar();
   },
@@ -234,7 +349,7 @@ const app = {
     }
     const filterSede = document.getElementById('filterSede');
     if (filterSede) {
-      filterSede.innerHTML = '<option value="">Tutte le sedi</option>' + SEDI.map(s => `<option value="${s}">${s}</option>`).join('');
+      filterSede.innerHTML = '<option value="">Tutte le sedi</option>' + getSedi().map(s => `<option value="${s}">${s}</option>`).join('');
     }
     this.populateAssignees();
   },
@@ -611,7 +726,7 @@ const tickets = {
     app.populateAssignees();
     const sedeSel = document.getElementById('ticketSede');
     if (sedeSel) {
-      sedeSel.innerHTML = '<option value="">Seleziona sede</option>' + SEDI.map(s => `<option value="${s}" ${currentUser.sede === s ? 'selected' : ''}>${s}</option>`).join('');
+      sedeSel.innerHTML = '<option value="">Seleziona sede</option>' + getSedi().map(s => `<option value="${s}" ${currentUser.sede === s ? 'selected' : ''}>${s}</option>`).join('');
       if (currentUser.role === 'admin') sedeSel.value = '';
       else sedeSel.value = currentUser.sede || '';
     }
@@ -780,7 +895,7 @@ const users = {
     document.getElementById('editUserRole').value = data ? data.role : 'user';
     const sedeSel = document.getElementById('editUserSede');
     if (sedeSel) {
-      sedeSel.innerHTML = '<option value="">Nessuna sede</option>' + SEDI.map(s => `<option value="${s}" ${data && data.sede === s ? 'selected' : ''}>${s}</option>`).join('');
+      sedeSel.innerHTML = '<option value="">Nessuna sede</option>' + getSedi().map(s => `<option value="${s}" ${data && data.sede === s ? 'selected' : ''}>${s}</option>`).join('');
       if (data) sedeSel.value = data.sede || '';
     }
     document.getElementById('userModalTitle').textContent = data ? 'Modifica Utente' : 'Nuovo Utente';
@@ -914,5 +1029,7 @@ window.dashboard = dashboard;
 window.tickets = tickets;
 window.users = users;
 window.notify = notify;
+
+auth.startBgRotation();
 
 })();
