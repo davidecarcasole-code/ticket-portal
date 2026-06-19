@@ -37,7 +37,7 @@
 .light .nav-item { color: var(--text-secondary); }
 .light .nav-item:hover,
 .light .nav-item.active { background: var(--bg); color: var(--primary); }
-.light .login-screen { background: linear-gradient(135deg, var(--bg), #e0e0e0); }
+.light .login-screen { background: transparent; }
 .light .stat-card { box-shadow: 0 2px 8px var(--shadow); }
 .light .topbar { background: #fff !important; border-bottom: 1px solid var(--border); }
 .light input,
@@ -58,7 +58,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
   position: fixed; inset: 0; z-index: 1000;
   display: flex; align-items: center; justify-content: center; overflow: hidden;
 }
-.login-bg-rotator { position: absolute; inset: 0; transition: opacity 2s ease; background: linear-gradient(135deg, #0f0f23, #1a1a3e); }
+.login-bg-rotator { position: fixed; inset: 0; z-index: -1; transition: opacity 2s ease; background: linear-gradient(135deg, #0f0f23, #1a1a3e); }
 .login-bg-img { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: opacity 2s ease; filter: blur(8px); transform: scale(1.1); }
 .login-bg-img.active { opacity: 1; }
 .login-bg-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.35); }

@@ -220,7 +220,6 @@ const auth = {
     errEl.textContent = '';
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('mainApp').classList.remove('hidden');
-    this.stopBgRotation();
     app.initApp();
   },
   logout() {
