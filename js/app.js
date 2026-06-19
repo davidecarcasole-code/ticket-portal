@@ -81,6 +81,7 @@ function setData(key, val) { localStorage.setItem('ticketflow_' + key, JSON.stri
 function migrateUsers(list) {
   return list.map(u => {
     if (!u.sede) u.sede = '';
+    if (!u.avatar) u.avatar = '';
     return u;
   });
 }
@@ -223,6 +224,7 @@ const auth = {
     app.initApp();
   },
   logout() {
+    chat.stopPolling();
     currentUser = null;
     document.getElementById('loginScreen').classList.remove('hidden');
     document.getElementById('mainApp').classList.add('hidden');
@@ -247,12 +249,25 @@ const app = {
     this.setupKeyboard();
     notify.init();
     this.loadEmailJSConfig();
+    chat.startPolling();
+    chat.updateBadge();
     setTimeout(() => dashboard.render(), 100);
     if (!currentUser) return;
     document.querySelectorAll('.admin-only').forEach(el => {
       el.classList.toggle('hidden', currentUser.role !== 'admin');
     });
     if (currentUser.role === 'admin') this.renderSedi();
+  },
+  loadProfileSettings() {
+    if (!currentUser) return;
+    const preview = document.getElementById('profileAvatar');
+    if (!preview) return;
+    const initials = currentUser.name.split(' ').map(s => s[0]).join('').toUpperCase().slice(0, 2);
+    if (currentUser.avatar) {
+      preview.innerHTML = `<img src="${currentUser.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;
+    } else {
+      preview.textContent = initials;
+    }
   },
   loadEmailJSConfig() {
     const cfg = getEmailCfg();
@@ -351,8 +366,14 @@ const app = {
   },
   updateUserUI() {
     if (!currentUser) return;
+    const avatarEl = document.getElementById('userAvatar');
     const initials = currentUser.name.split(' ').map(s => s[0]).join('').toUpperCase().slice(0, 2);
-    document.getElementById('userAvatar').textContent = initials;
+    if (currentUser.avatar) {
+      avatarEl.innerHTML = `<img src="${currentUser.avatar}" alt="${currentUser.name}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;
+    } else {
+      avatarEl.textContent = initials;
+      avatarEl.style.background = '';
+    }
     document.getElementById('userName').textContent = currentUser.name;
     document.getElementById('userRole').textContent = currentUser.role === 'admin' ? 'Administrator' : 'User';
     const sedeEl = document.getElementById('userSede');
@@ -361,6 +382,63 @@ const app = {
     const openCount = getTickets().filter(t => t.status === 'Aperto').length;
     badge.textContent = openCount;
     badge.style.display = openCount > 0 ? 'inline' : 'none';
+  },
+  uploadAvatar(input) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    if (file.size > 500 * 1024) { this.toast('Immagine troppo grande (max 500KB)', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      currentUser.avatar = e.target.result;
+      const list = getUsers();
+      const user = list.find(u => u.id === currentUser.id);
+      if (user) user.avatar = currentUser.avatar;
+      setUsers(list);
+      this.updateUserUI();
+      const preview = document.getElementById('profileAvatar');
+      if (preview) preview.innerHTML = `<img src="${currentUser.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;
+      document.getElementById('profileUploadStatus').textContent = 'Immagine aggiornata';
+      this.toast('Immagine profilo aggiornata', 'success');
+    };
+    reader.readAsDataURL(file);
+  },
+  removeAvatar() {
+    if (!app.confirm('Rimuovere l\'immagine del profilo?')) return;
+    currentUser.avatar = '';
+    const list = getUsers();
+    const user = list.find(u => u.id === currentUser.id);
+    if (user) user.avatar = '';
+    setUsers(list);
+    this.updateUserUI();
+    const preview = document.getElementById('profileAvatar');
+    if (preview) {
+      const initials = currentUser.name.split(' ').map(s => s[0]).join('').toUpperCase().slice(0, 2);
+      preview.textContent = initials;
+    }
+    document.getElementById('profileUploadStatus').textContent = '';
+    this.toast('Immagine rimossa', 'success');
+  },
+  changePassword() {
+    const current = document.getElementById('changePwdCurrent').value;
+    const newPwd = document.getElementById('changePwdNew').value.trim();
+    const confirm = document.getElementById('changePwdConfirm').value.trim();
+    const statusEl = document.getElementById('changePwdStatus');
+    if (!current || !newPwd || !confirm) { this.toast('Compila tutti i campi', 'error'); return; }
+    if (current !== currentUser.password) { this.toast('Password attuale errata', 'error'); return; }
+    if (newPwd.length < 4) { this.toast('La nuova password deve essere almeno 4 caratteri', 'error'); return; }
+    if (newPwd !== confirm) { this.toast('Le password non coincidono', 'error'); return; }
+    const list = getUsers();
+    const user = list.find(u => u.id === currentUser.id);
+    if (!user) return;
+    user.password = newPwd;
+    currentUser.password = newPwd;
+    setUsers(list);
+    document.getElementById('changePwdCurrent').value = '';
+    document.getElementById('changePwdNew').value = '';
+    document.getElementById('changePwdConfirm').value = '';
+    if (statusEl) statusEl.textContent = 'Password cambiata con successo';
+    this.toast('Password cambiata con successo', 'success');
+    setTimeout(() => { if (statusEl) statusEl.textContent = ''; }, 4000);
   },
   navigate(view) {
     if (view === 'users' && currentUser.role !== 'admin') { this.toast('Accesso negato', 'error'); return; }
@@ -375,7 +453,8 @@ const app = {
     if (view === 'tickets') tickets.render();
     if (view === 'users') users.render();
     if (view === 'newticket') tickets.prepareForm();
-    if (view === 'settings') { this.loadEmailJSConfig(); this.renderSedi(); }
+    if (view === 'chat') chat.render();
+    if (view === 'settings') { this.loadEmailJSConfig(); this.renderSedi(); this.loadProfileSettings(); }
     this.closeCustomizePanel();
     if (window.innerWidth <= 768) this.closeSidebar();
   },
@@ -535,6 +614,148 @@ const app = {
     setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateX(100%)'; el.style.transition = '0.3s'; setTimeout(() => el.remove(), 300); }, 3000);
   },
   confirm(msg) { return window.confirm(msg); }
+};
+
+const chat = {
+  interval: null,
+  getMessages() {
+    return getData('chats', []);
+  },
+  setMessages(list) {
+    setData('chats', list);
+  },
+  unreadCount() {
+    const msgs = this.getMessages();
+    return msgs.filter(m => m.to === currentUser.id && !m.read).length;
+  },
+  updateBadge() {
+    const badge = document.getElementById('chatBadge');
+    if (!badge) return;
+    const count = this.unreadCount();
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'inline' : 'none';
+  },
+  send() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    const msgs = this.getMessages();
+    const admin = getUsers().find(u => u.role === 'admin');
+    const recipient = currentUser.role === 'admin'
+      ? document.getElementById('chatPartnerId').value
+      : admin.id;
+    msgs.push({
+      id: uid(),
+      from: currentUser.id,
+      to: recipient,
+      text,
+      timestamp: Date.now(),
+      read: false
+    });
+    this.setMessages(msgs);
+    input.value = '';
+    this.renderMessages();
+    this.updateBadge();
+    app.toast('Messaggio inviato', 'success');
+  },
+  markRead(userId) {
+    const msgs = this.getMessages();
+    let changed = false;
+    msgs.forEach(m => {
+      if (m.from === userId && m.to === currentUser.id && !m.read) {
+        m.read = true; changed = true;
+      }
+    });
+    if (changed) this.setMessages(msgs);
+    this.updateBadge();
+  },
+  renderConversations() {
+    const sidebar = document.getElementById('chatSidebar');
+    if (!sidebar) return;
+    if (currentUser.role === 'admin') {
+      sidebar.style.display = 'block';
+      const msgs = this.getMessages();
+      const userIds = [...new Set(msgs.map(m => m.from === currentUser.id ? m.to : m.from))];
+      const users = getUsers().filter(u => userIds.includes(u.id));
+      const el = document.getElementById('chatConversations');
+      el.innerHTML = users.map(u => {
+        const last = msgs.filter(m => (m.from === u.id || m.to === u.id)).sort((a, b) => b.timestamp - a.timestamp)[0];
+        const unread = msgs.filter(m => m.from === u.id && m.to === currentUser.id && !m.read).length;
+        return `<div class="chat-conv" onclick="chat.openConversation('${u.id}')">
+          <div class="chat-conv-avatar">${u.avatar ? `<img src="${u.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">` : u.name[0]}</div>
+          <div class="chat-conv-info">
+            <div class="chat-conv-name">${u.name} ${unread ? `<span class="chat-conv-badge">${unread}</span>` : ''}</div>
+            <div class="chat-conv-preview">${last ? last.text : 'Nessun messaggio'}</div>
+          </div>
+        </div>`;
+      }).join('');
+      if (!users.length) el.innerHTML = '<div style="padding:1rem;color:var(--text-secondary);text-align:center">Nessuna conversazione</div>';
+    } else {
+      sidebar.style.display = 'none';
+    }
+  },
+  openConversation(userId) {
+    this.markRead(userId);
+    document.getElementById('chatPartnerId').value = userId;
+    const user = getUser(userId);
+    const avatarEl = document.getElementById('chatPartnerAvatar');
+    if (user.avatar) {
+      avatarEl.innerHTML = `<img src="${user.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;
+    } else {
+      avatarEl.textContent = user.name[0];
+    }
+    document.getElementById('chatPartnerName').textContent = user.name;
+    document.getElementById('chatInputArea').style.display = 'flex';
+    document.querySelector('.chat-empty')?.classList.add('hidden');
+    this.renderMessages();
+  },
+  renderMessages() {
+    const container = document.getElementById('chatMessages');
+    if (!container) return;
+    const otherId = document.getElementById('chatPartnerId')?.value;
+    if (!otherId) return;
+    const msgs = this.getMessages().filter(m =>
+      (m.from === currentUser.id && m.to === otherId) ||
+      (m.from === otherId && m.to === currentUser.id)
+    ).sort((a, b) => a.timestamp - b.timestamp);
+    container.innerHTML = msgs.map(m => `
+      <div class="chat-msg ${m.from === currentUser.id ? 'chat-msg-own' : 'chat-msg-other'}">
+        <div class="chat-msg-text">${m.text.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>
+        <div class="chat-msg-time">${new Date(m.timestamp).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+    `).join('');
+    container.scrollTop = container.scrollHeight;
+  },
+  render() {
+    this.renderConversations();
+    const partnerId = document.getElementById('chatPartnerId')?.value;
+    if (partnerId) {
+      this.openConversation(partnerId);
+    } else if (currentUser.role !== 'admin') {
+      const admin = getUsers().find(u => u.role === 'admin');
+      if (admin) this.openConversation(admin.id);
+    }
+  },
+  filter(query) {
+    document.querySelectorAll('.chat-conv').forEach(el => {
+      el.style.display = el.textContent.toLowerCase().includes(query.toLowerCase()) ? 'flex' : 'none';
+    });
+  },
+  startPolling() {
+    if (this.interval) clearInterval(this.interval);
+    this.interval = setInterval(() => {
+      this.updateBadge();
+      const otherId = document.getElementById('chatPartnerId')?.value;
+      if (otherId) {
+        this.markRead(otherId);
+        this.renderConversations();
+        this.renderMessages();
+      }
+    }, 3000);
+  },
+  stopPolling() {
+    if (this.interval) { clearInterval(this.interval); this.interval = null; }
+  }
 };
 
 const dashboard = {
@@ -984,6 +1205,7 @@ const users = {
       list[idx].username = username;
       list[idx].role = role;
       list[idx].sede = sede;
+      list[idx].avatar = list[idx].avatar || '';
       app.toast('Utente aggiornato', 'success');
     } else {
       if (!password) { app.toast('Password richiesta', 'error'); return; }
@@ -1085,6 +1307,7 @@ const notify = {
 
 window.auth = auth;
 window.app = app;
+window.chat = chat;
 window.dashboard = dashboard;
 window.tickets = tickets;
 window.users = users;
