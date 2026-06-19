@@ -634,6 +634,12 @@ const chat = {
     const count = this.unreadCount();
     badge.textContent = count;
     badge.style.display = count > 0 ? 'inline' : 'none';
+    const alert = document.getElementById('chatAlert');
+    if (alert) {
+      alert.classList.toggle('hidden', count === 0);
+      const cnt = document.getElementById('chatAlertCount');
+      if (cnt) cnt.textContent = count;
+    }
   },
   send() {
     const input = document.getElementById('chatInput');

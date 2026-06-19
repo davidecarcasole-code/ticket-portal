@@ -145,6 +145,11 @@
           <h1><i class="fas fa-chart-pie"></i> Dashboard</h1>
           <p>Panoramica dei ticket di supporto</p>
         </div>
+        <div class="chat-alert hidden" id="chatAlert" onclick="app.navigate('chat')">
+          <i class="fas fa-comments"></i>
+          <span>Hai <strong id="chatAlertCount">0</strong> nuovi messaggi nella chat</span>
+          <i class="fas fa-chevron-right"></i>
+        </div>
         <div class="stats-grid" id="statsGrid">
           <div class="stat-card stat-totale">
             <div class="stat-icon"><i class="fas fa-ticket-alt"></i></div>
@@ -357,18 +362,7 @@
               <span id="darkModeLabel">Tema scuro attivo</span>
             </div>
           </div>
-          <div class="card">
-            <div class="card-header"><h3><i class="fas fa-envelope"></i> Notifiche Email</h3></div>
-            <div class="card-body">
-              <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem">Invia email agli admin quando un utente USER apre un ticket. Servono credenziali EmailJS gratuite da <a href="https://www.emailjs.com" target="_blank" style="color:var(--primary)">emailjs.com</a>.</p>
-              <div class="form-group"><label>Public Key</label><input type="text" id="emailjsKey" placeholder="es. 9A7bC3dE5fG..." onchange="app.saveEmailJSConfig()"></div>
-              <div class="form-group"><label>Service ID</label><input type="text" id="emailjsService" placeholder="es. service_abc123" onchange="app.saveEmailJSConfig()"></div>
-              <div class="form-group"><label>Template ID</label><input type="text" id="emailjsTemplate" placeholder="es. template_def456" onchange="app.saveEmailJSConfig()"></div>
-              <div class="form-group"><label>Email destinatario (Admin)</label><input type="email" id="emailjsTo" placeholder="admin@azienda.com" onchange="app.saveEmailJSConfig()"></div>
-              <button class="btn btn-ghost btn-sm" onclick="app.testEmail()"><i class="fas fa-paper-plane"></i> Prova invio</button>
-              <span id="emailjsStatus" style="margin-left:0.5rem;font-size:0.85rem;color:var(--success)"></span>
-            </div>
-          </div>
+
           <!-- Profile Picture -->
           <div class="card">
             <div class="card-header"><h3><i class="fas fa-user-circle"></i> Immagine Profilo</h3></div>
