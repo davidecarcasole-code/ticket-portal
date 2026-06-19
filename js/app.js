@@ -230,6 +230,29 @@ const app = {
     if (svcEl) svcEl.value = cfg.service || '';
     if (tplEl) tplEl.value = cfg.template || '';
     if (toEl) toEl.value = cfg.to || '';
+    const resetSel = document.getElementById('resetUserSelect');
+    if (resetSel) {
+      resetSel.innerHTML = '<option value="">Seleziona utente</option>' +
+        getUsers().filter(u => u.role === 'user').map(u => `<option value="${u.id}">${u.name} (@${u.username})</option>`).join('');
+    }
+  },
+  resetPassword() {
+    const userId = document.getElementById('resetUserSelect').value;
+    const newPwd = document.getElementById('resetPasswordInput').value.trim();
+    const statusEl = document.getElementById('resetPwdStatus');
+    if (!userId) { app.toast('Seleziona un utente', 'error'); return; }
+    if (!newPwd) { app.toast('Inserisci la nuova password', 'error'); return; }
+    if (newPwd.length < 4) { app.toast('Password troppo corta (min 4 caratteri)', 'error'); return; }
+    const list = getUsers();
+    const user = list.find(u => u.id === userId);
+    if (!user) return;
+    user.password = newPwd;
+    setUsers(list);
+    document.getElementById('resetPasswordInput').value = '';
+    document.getElementById('resetUserSelect').value = '';
+    if (statusEl) statusEl.textContent = `Password resettata per ${user.name}`;
+    app.toast(`Password resettata per ${user.name}`, 'success');
+    setTimeout(() => { if (statusEl) statusEl.textContent = ''; }, 4000);
   },
   renderSedi() {
     const list = getSedi();
