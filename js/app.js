@@ -9,6 +9,7 @@ if (firestoreReady) {
       syncToFirestore('tickets');
       syncToFirestore('sedi');
       syncToFirestore('emailjs');
+      syncToFirestore('pmessages');
     }
     document.documentElement.setAttribute('data-theme', getData('theme', 'default'));
   });
@@ -238,6 +239,7 @@ const auth = {
   },
   logout() {
     chat.stopPolling();
+    pm.stopPolling();
     currentUser = null;
     document.getElementById('loginScreen').classList.remove('hidden');
     document.getElementById('mainApp').classList.add('hidden');
@@ -264,6 +266,8 @@ const app = {
     this.loadEmailJSConfig();
     chat.startPolling();
     chat.updateBadge();
+    pm.startPolling();
+    pm.updateBadge();
     setTimeout(() => dashboard.render(), 100);
     if (!currentUser) return;
     document.querySelectorAll('.admin-only').forEach(el => {
@@ -467,6 +471,7 @@ const app = {
     if (view === 'users') users.render();
     if (view === 'newticket') tickets.prepareForm();
     if (view === 'chat') chat.render();
+    if (view === 'privatemessages') pm.render();
     if (view === 'settings') { this.loadEmailJSConfig(); this.renderSedi(); this.loadProfileSettings(); }
     this.closeCustomizePanel();
     if (window.innerWidth <= 768) this.closeSidebar();
@@ -767,6 +772,159 @@ const chat = {
       const otherId = document.getElementById('chatPartnerId')?.value;
       if (otherId) {
         this.markRead(otherId);
+        this.renderConversations();
+        this.renderMessages();
+      }
+    }, 3000);
+  },
+  stopPolling() {
+    if (this.interval) { clearInterval(this.interval); this.interval = null; }
+  }
+};
+
+const pm = {
+  interval: null,
+  getMessages() {
+    return getData('pmessages', []);
+  },
+  setMessages(list) {
+    setData('pmessages', list);
+  },
+  unreadCount() {
+    return this.getMessages().filter(m => m.to === currentUser.id && !m.read).length;
+  },
+  updateBadge() {
+    const badge = document.getElementById('pmBadge');
+    if (!badge) return;
+    const count = this.unreadCount();
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'inline' : 'none';
+    const alert = document.getElementById('pmAlert');
+    if (alert) {
+      alert.classList.toggle('hidden', count === 0);
+      const cnt = document.getElementById('pmAlertCount');
+      if (cnt) cnt.textContent = count;
+    }
+  },
+  convId(a, b) {
+    return [a, b].sort().join('_');
+  },
+  send() {
+    const input = document.getElementById('pmInput');
+    const text = input.value.trim();
+    const partner = document.getElementById('pmPartnerId').value;
+    if (!text || !partner) return;
+    const msgs = this.getMessages();
+    msgs.push({
+      id: uid(),
+      convId: this.convId(currentUser.id, partner),
+      from: currentUser.id,
+      to: partner,
+      text,
+      timestamp: Date.now(),
+      read: false
+    });
+    this.setMessages(msgs);
+    input.value = '';
+    this.renderMessages();
+    this.updateBadge();
+    this.renderConversations();
+    app.toast('Messaggio inviato', 'success');
+  },
+  markRead(userId) {
+    const msgs = this.getMessages();
+    let changed = false;
+    msgs.forEach(m => {
+      if (m.from === userId && m.to === currentUser.id && !m.read) {
+        m.read = true; changed = true;
+      }
+    });
+    if (changed) this.setMessages(msgs);
+    this.updateBadge();
+  },
+  newConversation() {
+    const body = document.getElementById('pmNewBody');
+    const users = getUsers().filter(u => u.id !== currentUser.id);
+    body.innerHTML = users.map(u => `
+      <div class="chat-conv" onclick="app.closeModal('pmNewModal');pm.openConversation('${u.id}')">
+        <div class="chat-conv-avatar">${u.avatar ? `<img src="${u.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">` : u.name[0]}</div>
+        <div class="chat-conv-info">
+          <div class="chat-conv-name">${u.name}</div>
+          <div class="chat-conv-preview">${u.role === 'admin' ? 'Amministratore' : 'Utente'}${u.sede ? ' · ' + u.sede : ''}</div>
+        </div>
+      </div>
+    `).join('');
+    app.showModal('pmNewModal');
+  },
+  renderConversations() {
+    const el = document.getElementById('pmConversations');
+    if (!el) return;
+    const msgs = this.getMessages();
+    const users = getUsers().filter(u => u.id !== currentUser.id);
+    el.innerHTML = users.map(u => {
+      const convMsgs = msgs.filter(m => m.convId === this.convId(currentUser.id, u.id));
+      const last = convMsgs.sort((a, b) => b.timestamp - a.timestamp)[0];
+      if (!last) return '';
+      const unread = convMsgs.filter(m => m.from === u.id && !m.read).length;
+      return `<div class="chat-conv" onclick="pm.openConversation('${u.id}')">
+        <div class="chat-conv-avatar">${u.avatar ? `<img src="${u.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">` : u.name[0]}</div>
+        <div class="chat-conv-info">
+          <div class="chat-conv-name">${u.name} ${unread ? `<span class="chat-conv-badge">${unread}</span>` : ''}</div>
+          <div class="chat-conv-preview">${last ? last.text : ''}</div>
+        </div>
+      </div>`;
+    }).filter(Boolean).join('');
+    const empty = el.innerHTML === '';
+    if (empty) el.innerHTML = '<div style="padding:1rem;color:var(--text-secondary);text-align:center">Nessuna conversazione</div>';
+  },
+  openConversation(userId) {
+    this.markRead(userId);
+    document.getElementById('pmPartnerId').value = userId;
+    const user = getUser(userId);
+    const avatarEl = document.getElementById('pmPartnerAvatar');
+    if (user.avatar) {
+      avatarEl.innerHTML = `<img src="${user.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;
+    } else {
+      avatarEl.textContent = user.name[0];
+    }
+    document.getElementById('pmPartnerName').textContent = user.name;
+    document.getElementById('pmInputArea').style.display = 'flex';
+    document.querySelector('#pmMessages .chat-empty')?.classList.add('hidden');
+    this.renderMessages();
+  },
+  renderMessages() {
+    const container = document.getElementById('pmMessages');
+    if (!container) return;
+    const partner = document.getElementById('pmPartnerId')?.value;
+    if (!partner) return;
+    const msgs = this.getMessages().filter(m =>
+      m.convId === this.convId(currentUser.id, partner)
+    ).sort((a, b) => a.timestamp - b.timestamp);
+    container.innerHTML = msgs.map(m => `
+      <div class="chat-msg ${m.from === currentUser.id ? 'chat-msg-own' : 'chat-msg-other'}">
+        <div class="chat-msg-text">${m.text.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>
+        <div class="chat-msg-time">${new Date(m.timestamp).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+    `).join('');
+    container.scrollTop = container.scrollHeight;
+  },
+  render() {
+    this.renderConversations();
+    const partner = document.getElementById('pmPartnerId')?.value;
+    if (partner) this.openConversation(partner);
+  },
+  filter(query) {
+    document.querySelectorAll('#pmConversations .chat-conv').forEach(el => {
+      el.style.display = el.textContent.toLowerCase().includes(query.toLowerCase()) ? 'flex' : 'none';
+    });
+  },
+  startPolling() {
+    if (this.interval) clearInterval(this.interval);
+    this.interval = setInterval(() => {
+      this.updateBadge();
+      const partner = document.getElementById('pmPartnerId')?.value;
+      if (partner) {
+        this.markRead(partner);
         this.renderConversations();
         this.renderMessages();
       }
@@ -1327,6 +1485,7 @@ const notify = {
 window.auth = auth;
 window.app = app;
 window.chat = chat;
+window.pm = pm;
 window.dashboard = dashboard;
 window.tickets = tickets;
 window.users = users;

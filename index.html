@@ -83,6 +83,10 @@
         <i class="fas fa-comments"></i> <span>Messaggi</span>
         <span class="nav-badge hidden" id="chatBadge">0</span>
       </a>
+      <a class="nav-item" data-view="privatemessages" onclick="app.navigate('privatemessages')">
+        <i class="fas fa-envelope"></i> <span>Messaggi Privati</span>
+        <span class="nav-badge hidden" id="pmBadge">0</span>
+      </a>
       <a class="nav-item admin-only hidden" data-view="users" onclick="app.navigate('users')">
         <i class="fas fa-users-cog"></i> <span>Utenti</span>
       </a>
@@ -146,6 +150,11 @@
         <div class="chat-alert hidden" id="chatAlert" onclick="app.navigate('chat')">
           <i class="fas fa-comments"></i>
           <span>Hai <strong id="chatAlertCount">0</strong> nuovi messaggi nella chat</span>
+          <i class="fas fa-chevron-right"></i>
+        </div>
+        <div class="chat-alert hidden" id="pmAlert" onclick="app.navigate('privatemessages')" style="background:var(--accent);margin-top:0.5rem">
+          <i class="fas fa-envelope"></i>
+          <span>Hai <strong id="pmAlertCount">0</strong> nuovi messaggi privati</span>
           <i class="fas fa-chevron-right"></i>
         </div>
         <div class="stats-grid" id="statsGrid">
@@ -312,6 +321,37 @@
         </div>
       </div>
 
+      <!-- PRIVATE MESSAGES -->
+      <div class="page" id="page-privatemessages">
+        <div class="page-header">
+          <h1><i class="fas fa-envelope"></i> Messaggi Privati</h1>
+          <p>Scrivi messaggi privati ad altri utenti</p>
+        </div>
+        <div class="chat-layout">
+          <div class="chat-sidebar">
+            <div class="chat-search"><i class="fas fa-search"></i><input type="text" placeholder="Cerca contatto..." oninput="pm.filter(this.value)"></div>
+            <div style="padding:0.5rem"><button class="btn btn-primary btn-sm btn-block" onclick="pm.newConversation()"><i class="fas fa-plus"></i> Nuova conversazione</button></div>
+            <div class="chat-conversations" id="pmConversations"></div>
+          </div>
+          <div class="chat-main">
+            <div class="chat-header">
+              <div class="chat-header-info">
+                <div class="chat-header-avatar" id="pmPartnerAvatar">S</div>
+                <div><span class="chat-header-name" id="pmPartnerName">Seleziona un contatto</span></div>
+              </div>
+              <input type="hidden" id="pmPartnerId" value="">
+            </div>
+            <div class="chat-messages" id="pmMessages">
+              <div class="chat-empty"><i class="fas fa-envelope"></i><p>Seleziona un contatto per iniziare</p></div>
+            </div>
+            <div class="chat-input-area" id="pmInputArea" style="display:none">
+              <textarea class="chat-input" id="pmInput" placeholder="Scrivi un messaggio..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();pm.send()}"></textarea>
+              <button class="btn btn-primary" onclick="pm.send()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- SETTINGS -->
       <div class="page" id="page-settings">
         <div class="page-header">
@@ -452,6 +492,17 @@
         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Salva</button>
       </form>
     </div>
+  </div>
+</div>
+
+<!-- New PM Conversation Modal -->
+<div class="modal-overlay hidden" id="pmNewModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3><i class="fas fa-envelope"></i> Nuova conversazione</h3>
+      <button class="modal-close" onclick="app.closeModal('pmNewModal')">&times;</button>
+    </div>
+    <div class="modal-body" id="pmNewBody"></div>
   </div>
 </div>
 
