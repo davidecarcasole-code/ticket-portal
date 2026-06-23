@@ -1576,12 +1576,18 @@ const notify = {
       this.add('Errore invio email', err.text || err.message || 'Errore sconosciuto', 'error');
     }
   },
+  remove(id) {
+    setNotifs(getNotifs().filter(n => n.id !== id));
+    this.updateBadge();
+    app.closeModal('notifModal');
+    if (currentUser.role === 'admin') app.navigate('users');
+  },
   renderModal() {
     const list = getNotifs();
     const body = document.getElementById('notifBody');
     if (!list.length) { body.innerHTML = '<p class="empty-state">Nessuna notifica</p>'; return; }
     body.innerHTML = list.map(n => `
-      <div class="ticket-item" style="opacity:${n.read ? 0.6 : 1};cursor:pointer" onclick="${currentUser.role === 'admin' ? "app.closeModal('notifModal');app.navigate('users')" : "app.closeModal('notifModal')"}">
+      <div class="ticket-item" style="opacity:${n.read ? 0.6 : 1};cursor:pointer" onclick="notify.remove('${n.id}')">
         <div class="ticket-priority" style="background:${n.type === 'error' ? 'var(--danger)' : n.type === 'warning' ? 'var(--warning)' : 'var(--success)'};width:4px;min-height:40px;border-radius:2px"></div>
         <div class="ticket-info">
           <h4>${n.title}</h4>
