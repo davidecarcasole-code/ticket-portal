@@ -1,0 +1,50 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1B1B2F"/>
+      <stop offset="100%" style="stop-color:#2A2A4A"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#bg)"/>
+  <rect width="1200" height="60" fill="#0F0F1F"/>
+  <rect x="30" y="15" width="40" height="30" rx="6" fill="#C5A55A"/>
+  <text x="85" y="38" font-family="Cinzel, serif" font-size="16" fill="#FFFFFF" font-weight="700">Studio Legale Mandroneniglio</text>
+  <rect x="0" y="60" width="1200" height="3" fill="rgba(197,165,90,0.15)"/>
+  <text x="600" y="180" text-anchor="middle" font-family="Cinzel, serif" font-size="42" fill="#C5A55A" font-weight="700">Studio Legale Mandroneniglio</text>
+  <text x="600" y="230" text-anchor="middle" font-family="Lato, sans-serif" font-size="18" fill="#AAAAAA">Eccellenza legale · Diritto Civile, Penale e Amministrativo</text>
+  <rect x="420" y="270" width="160" height="46" rx="6" fill="#C5A55A"/>
+  <text x="500" y="300" text-anchor="middle" font-family="Lato, sans-serif" font-size="13" fill="#1B1B2F" font-weight="700">RICHIEDI CONSULENZA</text>
+  <rect x="600" y="270" width="180" height="46" rx="6" fill="none" stroke="#C5A55A" stroke-width="2"/>
+  <text x="690" y="300" text-anchor="middle" font-family="Lato, sans-serif" font-size="13" fill="#C5A55A" font-weight="700">SCOPRI LO STUDIO</text>
+  <rect x="0" y="360" width="1200" height="80" fill="#1B1B2F"/>
+  <text x="150" y="405" text-anchor="middle" font-family="Playfair Display, serif" font-size="32" fill="#C5A55A" font-weight="700">1200</text><text x="150" y="425" text-anchor="middle" font-family="Lato, sans-serif" font-size="11" fill="#999" text-transform="uppercase">Clienti</text>
+  <text x="450" y="405" text-anchor="middle" font-family="Playfair Display, serif" font-size="32" fill="#C5A55A" font-weight="700">3500</text><text x="450" y="425" text-anchor="middle" font-family="Lato, sans-serif" font-size="11" fill="#999">Cause vinte</text>
+  <text x="750" y="405" text-anchor="middle" font-family="Playfair Display, serif" font-size="32" fill="#C5A55A" font-weight="700">38</text><text x="750" y="425" text-anchor="middle" font-family="Lato, sans-serif" font-size="11" fill="#999">Anni</text>
+  <text x="1050" y="405" text-anchor="middle" font-family="Playfair Display, serif" font-size="32" fill="#C5A55A" font-weight="700">98%</text><text x="1050" y="425" text-anchor="middle" font-family="Lato, sans-serif" font-size="11" fill="#999">Successo</text>
+  <rect x="30" y="480" width="360" height="180" rx="8" fill="#FFF" opacity="0.05" stroke="rgba(197,165,90,0.15)" stroke-width="1"/>
+  <rect x="60" y="510" width="50" height="50" rx="25" fill="rgba(197,165,90,0.2)"/>
+  <text x="85" y="540" text-anchor="middle" font-size="18" fill="#C5A55A">⚖</text>
+  <text x="130" y="530" font-family="Playfair Display, serif" font-size="16" fill="#FFF">Diritto Civile</text>
+  <text x="130" y="555" font-family="Lato, sans-serif" font-size="11" fill="#999">Contratti, responsabilità</text>
+  <rect x="420" y="480" width="360" height="180" rx="8" fill="#FFF" opacity="0.05" stroke="rgba(197,165,90,0.15)" stroke-width="1"/>
+  <rect x="450" y="510" width="50" height="50" rx="25" fill="rgba(197,165,90,0.2)"/>
+  <text x="475" y="540" text-anchor="middle" font-size="18" fill="#C5A55A">⚖</text>
+  <text x="520" y="530" font-family="Playfair Display, serif" font-size="16" fill="#FFF">Diritto Penale</text>
+  <text x="520" y="555" font-family="Lato, sans-serif" font-size="11" fill="#999">Difesa e consulenza</text>
+  <rect x="810" y="480" width="360" height="180" rx="8" fill="#FFF" opacity="0.05" stroke="rgba(197,165,90,0.15)" stroke-width="1"/>
+  <rect x="840" y="510" width="50" height="50" rx="25" fill="rgba(197,165,90,0.2)"/>
+  <text x="865" y="540" text-anchor="middle" font-size="18" fill="#C5A55A">⚖</text>
+  <text x="910" y="530" font-family="Playfair Display, serif" font-size="16" fill="#FFF">Diritto Amministrativo</text>
+  <text x="910" y="555" font-family="Lato, sans-serif" font-size="11" fill="#999">Ricorsi e appalti</text>
+  <rect x="0" y="710" width="1200" height="190" fill="#0F0F1F"/>
+  <text x="200" y="750" font-family="Playfair Display, serif" font-size="14" fill="#C5A55A" font-weight="700">Contatti</text>
+  <text x="200" y="775" font-family="Lato, sans-serif" font-size="11" fill="#777">Via dei Giureconsulti, 25</text>
+  <text x="200" y="795" font-family="Lato, sans-serif" font-size="11" fill="#777">00186 Roma</text>
+  <text x="700" y="750" font-family="Playfair Display, serif" font-size="14" fill="#C5A55A" font-weight="700">Aree di Diritto</text>
+  <text x="700" y="775" font-family="Lato, sans-serif" font-size="11" fill="#777">Diritto Civile · Penale · Amministrativo</text>
+  <text x="700" y="795" font-family="Lato, sans-serif" font-size="11" fill="#777">Famiglia · Lavoro · Societario</text>
+  <text x="1000" y="750" font-family="Playfair Display, serif" font-size="14" fill="#C5A55A" font-weight="700">Seguici</text>
+  <circle cx="1000" cy="775" r="12" fill="none" stroke="rgba(197,165,90,0.3)" stroke-width="1"/><text x="1000" y="780" text-anchor="middle" font-size="10" fill="#C5A55A">in</text>
+  <circle cx="1030" cy="775" r="12" fill="none" stroke="rgba(197,165,90,0.3)" stroke-width="1"/><text x="1030" y="780" text-anchor="middle" font-size="10" fill="#C5A55A">f</text>
+  <text x="600" y="875" text-anchor="middle" font-family="Lato, sans-serif" font-size="9" fill="#555">Studio Legale Mandroneniglio &copy; 2025 · P.IVA 01234567890</text>
+</svg>

@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Legale Mandroneniglio - Preview</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Lato:wght@300;400;700;900&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --slm-primary: #1B1B2F;
+            --slm-primary-light: #2A2A4A;
+            --slm-primary-dark: #0F0F1F;
+            --slm-accent: #C5A55A;
+            --slm-accent-light: #D4C17A;
+            --slm-white: #FFFFFF;
+            --slm-light: #F5F5F0;
+            --slm-gray-100: #F0F0EB;
+            --slm-gray-200: #E0E0D8;
+            --slm-gray-300: #CCCCC4;
+            --slm-gray-400: #999990;
+            --slm-gray-500: #66665E;
+            --slm-text: #33332B;
+            --font-heading: 'Cinzel', 'Georgia', serif;
+            --font-subheading: 'Playfair Display', 'Georgia', serif;
+            --font-body: 'Lato', 'Helvetica Neue', Arial, sans-serif;
+            --container-width: 1200px;
+            --transition: 0.3s ease;
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.16);
+            --shadow-gold: 0 4px 20px rgba(197,165,90,0.3);
+            --radius: 8px;
+            --radius-lg: 12px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-body); font-size: 1rem; line-height: 1.7; color: var(--slm-text); background: var(--slm-white); }
+        .container { max-width: var(--container-width); margin: 0 auto; padding: 0 24px; }
+        a { color: #A8883A; text-decoration: none; }
+        a:hover { color: var(--slm-accent); }
+        img { max-width: 100%; height: auto; display: block; }
+        h1, h2, h3 { font-family: var(--font-heading); line-height: 1.3; margin-bottom: 0.5em; color: var(--slm-primary); }
+        h1 { font-size: 2.5rem; } h2 { font-size: 2rem; } h3 { font-size: 1.5rem; }
+        p { margin-bottom: 1rem; }
+
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; font-family: var(--font-body); font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border: none; border-radius: var(--radius); cursor: pointer; transition: all var(--transition); text-decoration: none; line-height: 1.4; }
+        .btn-lg { padding: 16px 36px; font-size: 1.05rem; }
+        .btn-primary { background: var(--slm-accent); color: var(--slm-primary) !important; }
+        .btn-primary:hover { background: var(--slm-accent-light); transform: translateY(-2px); box-shadow: var(--shadow-gold); }
+        .btn-outline { background: transparent; color: var(--slm-white) !important; border: 2px solid var(--slm-accent); }
+        .btn-outline:hover { background: var(--slm-accent); color: var(--slm-primary) !important; }
+        .btn-secondary { background: var(--slm-primary); color: var(--slm-white) !important; }
+        .btn-secondary:hover { background: var(--slm-primary-light); transform: translateY(-2px); }
+
+        .section-header { text-align: center; max-width: 700px; margin: 0 auto 48px; }
+        .section-badge { display: inline-block; padding: 6px 18px; background: rgba(197,165,90,0.1); border-radius: 50px; font-size: 0.8rem; font-weight: 600; color: var(--slm-accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
+        .section-title { font-size: 2.4rem; color: var(--slm-primary); margin-bottom: 16px; }
+
+        .preview-nav { background: var(--slm-primary-dark); padding: 12px 0; position: sticky; top: 0; z-index: 1000; border-bottom: 2px solid var(--slm-accent); }
+        .preview-nav .container { display: flex; justify-content: space-between; align-items: center; }
+        .preview-nav h2 { color: var(--slm-accent); font-size: 1.1rem; margin: 0; }
+        .preview-nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+        .preview-nav-links a { padding: 6px 14px; border-radius: var(--radius); font-size: 0.82rem; font-weight: 600; color: #ccc; background: rgba(255,255,255,0.05); }
+        .preview-nav-links a:hover { background: var(--slm-accent); color: var(--slm-primary); }
+
+        /* HEADER */
+        .site-header { background: var(--slm-primary); }
+        .header-top { background: var(--slm-primary-dark); padding: 8px 0; font-size: 0.82rem; border-bottom: 1px solid rgba(197,165,90,0.15); }
+        .header-top-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        .header-contact { display: flex; align-items: center; gap: 20px; color: #999; }
+        .header-contact i { color: var(--slm-accent); margin-right: 6px; }
+        .header-contact a { color: #ccc; }
+        .header-contact a:hover { color: var(--slm-accent); }
+        .header-user-menu { display: flex; gap: 16px; }
+        .header-user-menu a { color: #ccc; display: inline-flex; align-items: center; gap: 5px; }
+        .header-user-menu a:hover { color: var(--slm-accent); }
+        .header-main { padding: 15px 0; }
+        .header-main .container { display: flex; justify-content: space-between; align-items: center; gap: 30px; }
+        .site-branding a { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .site-title { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; color: var(--slm-white); }
+        .site-description { display: block; font-size: 0.7rem; color: var(--slm-accent); letter-spacing: 2px; text-transform: uppercase; font-weight: 300; }
+        #primary-menu { display: flex; list-style: none; gap: 4px; }
+        #primary-menu > li > a { display: block; padding: 10px 18px; font-size: 0.85rem; font-weight: 600; color: #ccc; text-transform: uppercase; letter-spacing: 1px; border-radius: var(--radius); }
+        #primary-menu > li > a:hover, #primary-menu > li.current-menu-item > a { color: var(--slm-accent); background: rgba(197,165,90,0.08); }
+
+        /* HERO SLIDER */
+        .hero-section { position: relative; overflow: hidden; }
+        .hero-slider { position: relative; width: 100%; }
+        .hero-slide { position: relative; padding: 140px 0; min-height: 600px; display: none; align-items: center; }
+        .hero-slide.active { display: flex; }
+        .hero-bg { position: absolute; inset: 0; z-index: 0; background-size: cover !important; background-position: center !important; }
+        .hero-particles { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+        .hero-particles::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(2px 2px at 10% 20%, rgba(197,165,90,0.3), transparent), radial-gradient(2px 2px at 30% 60%, rgba(197,165,90,0.2), transparent), radial-gradient(3px 3px at 50% 10%, rgba(197,165,90,0.25), transparent), radial-gradient(2px 2px at 70% 40%, rgba(197,165,90,0.2), transparent), radial-gradient(2px 2px at 90% 70%, rgba(197,165,90,0.3), transparent), radial-gradient(3px 3px at 20% 80%, rgba(197,165,90,0.15), transparent), radial-gradient(2px 2px at 60% 90%, rgba(197,165,90,0.25), transparent), radial-gradient(2px 2px at 80% 15%, rgba(197,165,90,0.2), transparent), radial-gradient(3px 3px at 15% 40%, rgba(197,165,90,0.2), transparent), radial-gradient(2px 2px at 45% 70%, rgba(197,165,90,0.3), transparent);
+            animation: floatP 8s ease-in-out infinite alternate;
+        }
+        @keyframes floatP { 0% { transform: translateY(0); opacity: 0.6; } 100% { transform: translateY(-20px); opacity: 1; } }
+        .hero-slide .container { position: relative; z-index: 1; }
+        .hero-content { max-width: 720px; opacity: 0; transform: translateY(30px); transition: all 0.8s ease 0.3s; }
+        .hero-slide.active .hero-content { opacity: 1; transform: translateY(0); }
+        .hero-badge { display: inline-block; padding: 8px 20px; background: rgba(197,165,90,0.15); border: 1px solid rgba(197,165,90,0.3); border-radius: 50px; font-size: 0.85rem; font-weight: 600; color: var(--slm-accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; }
+        .hero-title { font-family: var(--font-heading); font-size: 3.5rem; font-weight: 700; color: var(--slm-white); line-height: 1.15; margin-bottom: 20px; }
+        .hero-subtitle { font-size: 1.2rem; color: #ccc; line-height: 1.7; margin-bottom: 36px; max-width: 600px; }
+        .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+
+        .hero-nav { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 20px; z-index: 10; }
+        .hero-arrow { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(197,165,90,0.3); color: var(--slm-accent); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+        .hero-arrow:hover { background: var(--slm-accent); color: var(--slm-primary); }
+        .hero-dots { display: flex; gap: 10px; }
+        .hero-dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.2); border: none; cursor: pointer; padding: 0; }
+        .hero-dot.active { background: var(--slm-accent); transform: scale(1.2); box-shadow: 0 0 12px rgba(197,165,90,0.4); }
+        .hero-progress { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.1); z-index: 10; }
+        .hero-progress-bar { height: 100%; background: var(--slm-accent); width: 0%; }
+
+        /* TRUST */
+        .trust-section { background: var(--slm-primary); padding: 40px 0; border-top: 1px solid rgba(197,165,90,0.1); border-bottom: 1px solid rgba(197,165,90,0.1); }
+        .trust-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; text-align: center; }
+        .trust-item { position: relative; padding: 0 20px; }
+        .trust-item:not(:last-child)::after { content: ''; position: absolute; right: 0; top: 10%; height: 80%; width: 1px; background: rgba(197,165,90,0.2); }
+        .trust-number { display: block; font-family: var(--font-subheading); font-size: 2.8rem; font-weight: 700; color: var(--slm-accent); line-height: 1.1; }
+        .trust-label { display: block; font-size: 0.9rem; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+        /* AREAS */
+        .areas-section { padding: 80px 0; }
+        .areas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .area-card { background: var(--slm-white); border: 1px solid #e0e0d8; border-radius: var(--radius-lg); padding: 36px 28px; text-decoration: none; display: flex; flex-direction: column; align-items: flex-start; }
+        .area-card:hover { border-color: var(--slm-accent); transform: translateY(-4px); }
+        .area-icon { margin-bottom: 20px; }
+        .area-card h3 { font-family: var(--font-subheading); font-size: 1.3rem; color: var(--slm-primary); margin-bottom: 12px; }
+        .area-card p { font-size: 0.95rem; color: var(--slm-gray-500); margin-bottom: 20px; flex-grow: 1; }
+        .area-link { font-size: 0.85rem; font-weight: 700; color: #A8883A; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 8px; }
+        .area-card:hover .area-link { color: var(--slm-accent); gap: 12px; }
+
+        /* ABOUT + PARALLAX */
+        .parallax-section { position: relative; overflow: hidden; }
+        .parallax-bg { position: absolute; inset: 0; z-index: 0; will-change: transform; }
+        .parallax-section .container { position: relative; z-index: 1; }
+        .about-section { padding: 80px 0; background: var(--slm-light); }
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .about-content h2 { font-size: 2.2rem; margin-bottom: 20px; }
+        .about-content p { color: var(--slm-gray-500); }
+        .about-features { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 24px 0; }
+        .feature { display: flex; align-items: center; gap: 10px; font-size: 0.95rem; color: var(--slm-text); }
+        .feature i { color: var(--slm-accent); }
+        .about-image { position: relative; }
+        .about-placeholder { width: 100%; height: 500px; background: linear-gradient(135deg, var(--slm-primary-light), var(--slm-primary)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; }
+        .about-experience-badge { position: absolute; bottom: -20px; right: -20px; background: var(--slm-accent); border-radius: var(--radius-lg); padding: 24px; text-align: center; min-width: 140px; box-shadow: var(--shadow-gold); }
+        .about-experience-badge .years { display: block; font-family: var(--font-heading); font-size: 2.2rem; font-weight: 700; color: var(--slm-primary); line-height: 1; }
+        .about-experience-badge .text { display: block; font-size: 0.8rem; color: var(--slm-primary); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* FEATURES */
+        .features-section { padding: 80px 0; }
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .feature-card { text-align: center; padding: 40px 24px; border: 1px solid #e0e0d8; border-radius: var(--radius-lg); }
+        .feature-card:hover { border-color: var(--slm-accent); transform: translateY(-4px); }
+        .feature-card-icon { width: 64px; height: 64px; margin: 0 auto 20px; background: rgba(197,165,90,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: var(--slm-accent); }
+        .feature-card h3 { font-family: var(--font-subheading); font-size: 1.2rem; margin-bottom: 12px; }
+        .feature-card p { color: var(--slm-gray-500); font-size: 0.95rem; margin: 0; }
+
+        /* TESTIMONIALS CAROUSEL */
+        .testimonials-section { padding: 80px 0; background: var(--slm-primary); overflow: hidden; }
+        .testimonials-section .section-title { color: var(--slm-white); }
+        .testimonials-carousel { position: relative; max-width: 100%; overflow: hidden; }
+        .testimonials-track { display: flex; transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94); gap: 24px; }
+        .testimonial-card { min-width: calc((100% - 48px) / 3); background: rgba(255,255,255,0.05); border: 1px solid rgba(197,165,90,0.15); border-radius: var(--radius-lg); padding: 32px; flex-shrink: 0; }
+        .testimonial-stars { color: var(--slm-accent); font-size: 1.1rem; letter-spacing: 3px; margin-bottom: 16px; }
+        .testimonial-text { font-family: var(--font-subheading); font-size: 1.05rem; color: #ccc; font-style: italic; line-height: 1.7; margin-bottom: 20px; }
+        .testimonial-author { display: flex; align-items: center; gap: 12px; }
+        .testimonial-author .avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--slm-accent); display: flex; align-items: center; justify-content: center; color: var(--slm-primary); font-weight: 700; font-size: 1.1rem; flex-shrink: 0; }
+        .testimonial-author strong { display: block; color: var(--slm-white); font-size: 0.95rem; }
+        .testimonial-author span { font-size: 0.8rem; color: #999; }
+        .testimonials-nav { display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 32px; }
+        .testimonial-arrow { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(197,165,90,0.3); color: var(--slm-accent); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+        .testimonial-arrow:hover { background: var(--slm-accent); color: var(--slm-primary); }
+        .testimonial-dots { display: flex; gap: 8px; }
+        .testimonial-dots .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.2); border: none; cursor: pointer; padding: 0; }
+        .testimonial-dots .dot.active { background: var(--slm-accent); transform: scale(1.2); }
+
+        /* FORUM PREVIEW */
+        .forum-preview-section { padding: 80px 0; }
+        .forum-cta { text-align: center; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+        .recent-topics { max-width: 700px; margin: 0 auto; background: #f0f0eb; border-radius: var(--radius-lg); padding: 32px; }
+        .recent-topics h3 { font-family: var(--font-subheading); font-size: 1.2rem; margin-bottom: 20px; }
+        .topics-list { display: flex; flex-direction: column; gap: 8px; }
+        .topic-item { background: var(--slm-white); border-radius: var(--radius); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+        .topic-item:hover { transform: translateX(4px); }
+        .topic-item .topic-title { font-weight: 600; color: var(--slm-primary); }
+        .topic-item .topic-meta { font-size: 0.85rem; color: #999; white-space: nowrap; }
+
+        /* CTA */
+        .contact-cta-section { padding: 0 0 80px; }
+        .cta-box { background: linear-gradient(135deg, var(--slm-primary) 0%, var(--slm-primary-light) 100%); border-radius: var(--radius-lg); padding: 60px; display: flex; justify-content: space-between; align-items: center; gap: 40px; position: relative; overflow: hidden; }
+        .cta-content { position: relative; z-index: 1; flex: 1; }
+        .cta-content h2 { color: var(--slm-white); font-size: 2rem; margin-bottom: 12px; }
+        .cta-content p { color: #ccc; font-size: 1.05rem; margin: 0; }
+        .cta-actions { display: flex; gap: 12px; flex-shrink: 0; position: relative; z-index: 1; }
+
+        /* FOOTER */
+        .site-footer { background: var(--slm-primary-dark); color: #999; }
+        .footer-widgets { padding: 60px 0; border-bottom: 1px solid rgba(197,165,90,0.1); }
+        .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 40px; }
+        .footer-title { font-family: var(--font-subheading); color: var(--slm-accent); font-size: 1.1rem; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(197,165,90,0.2); }
+        .footer-contact { list-style: none; }
+        .footer-contact li { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; font-size: 0.9rem; }
+        .footer-contact i { color: var(--slm-accent); min-width: 16px; }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 10px; }
+        .footer-links a { color: #999; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px; }
+        .footer-links a::before { content: '\f105'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: var(--slm-accent); }
+        .footer-links a:hover { color: var(--slm-accent); }
+        .social-links { display: flex; gap: 10px; margin-bottom: 24px; }
+        .social-link { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 1px solid rgba(197,165,90,0.25); border-radius: 50%; color: var(--slm-accent) !important; }
+        .social-link:hover { background: var(--slm-accent); color: var(--slm-primary) !important; }
+        .newsletter-form { display: flex; margin-top: 12px; }
+        .newsletter-form input { flex: 1; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(197,165,90,0.2); border-right: none; border-radius: var(--radius) 0 0 var(--radius); color: var(--slm-white); outline: none; }
+        .newsletter-form button { padding: 10px 16px; background: var(--slm-accent); border: none; border-radius: 0 var(--radius) var(--radius) 0; color: var(--slm-primary); cursor: pointer; }
+        .footer-bottom { padding: 20px 0; }
+        .footer-bottom-content { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+        .copyright a { color: var(--slm-accent); }
+
+        /* FADE-IN */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* FORUM PAGE */
+        .forum-page { padding: 60px 0; }
+        .page-intro { text-align: center; max-width: 700px; margin: 0 auto 48px; }
+        .forum-layout { display: flex; gap: 32px; align-items: flex-start; }
+        .forum-sidebar { width: 280px; flex-shrink: 0; }
+        .forum-categories { background: #f0f0eb; border-radius: var(--radius-lg); padding: 24px; margin-bottom: 20px; }
+        .forum-categories h3 { font-family: var(--font-subheading); font-size: 1.1rem; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid var(--slm-accent); }
+        .forum-cat-list { list-style: none; }
+        .forum-cat-list a { display: block; padding: 10px 12px; color: var(--slm-text); border-radius: var(--radius); font-size: 0.9rem; font-weight: 500; }
+        .forum-cat-list a:hover, .forum-cat-list li.active a { background: var(--slm-accent); color: var(--slm-primary); }
+        .forum-content { flex: 1; min-width: 0; }
+        .forum-topics-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .forum-topics-header h2 { font-size: 1.5rem; margin: 0; }
+        .forum-topics-list { display: flex; flex-direction: column; gap: 8px; }
+        .forum-topic-item { display: flex; align-items: center; gap: 16px; background: var(--slm-white); border: 1px solid #e0e0d8; border-radius: var(--radius); padding: 18px 20px; }
+        .forum-topic-item:hover { border-color: var(--slm-accent); }
+        .forum-topic-item.pinned { border-left: 3px solid var(--slm-accent); }
+        .forum-topic-item.closed { opacity: 0.6; }
+        .topic-indicator { display: flex; gap: 4px; min-width: 30px; }
+        .topic-indicator .pinned { color: var(--slm-accent); }
+        .topic-indicator .closed { color: #999; }
+        .topic-main { flex: 1; }
+        .topic-title { font-size: 1rem; font-weight: 600; margin: 0 0 4px; }
+        .topic-title a { color: var(--slm-primary); }
+        .topic-meta { display: flex; gap: 16px; font-size: 0.8rem; color: #999; }
+        .topic-stats { text-align: right; flex-shrink: 0; }
+        .topic-stats .topic-replies { display: block; font-weight: 600; color: var(--slm-text); }
+
+        /* PROFILE */
+        .profile-page { padding: 60px 0; background: #f0f0eb; }
+        .profile-header { display: flex; align-items: center; gap: 32px; padding: 32px; background: #f0f0eb; border-radius: var(--radius-lg); margin-bottom: 32px; max-width: 800px; }
+        .profile-avatar { width: 120px; height: 120px; border-radius: 50%; background: var(--slm-primary-light); border: 4px solid var(--slm-accent); display: flex; align-items: center; justify-content: center; color: var(--slm-white); font-size: 2.5rem; font-weight: 700; font-family: var(--font-heading); flex-shrink: 0; }
+        .profile-info h2 { font-size: 1.5rem; margin: 0 0 4px; }
+        .profile-actions { display: flex; gap: 12px; margin-top: 20px; }
+
+        /* CONTATTI */
+        .contact-preview { padding: 60px 0; background: var(--slm-light); }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 48px; }
+        .contact-detail { display: flex; gap: 16px; margin-bottom: 20px; }
+        .detail-icon { width: 48px; height: 48px; background: rgba(197,165,90,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--slm-accent); font-size: 1.1rem; flex-shrink: 0; }
+        .contact-detail h4 { font-family: var(--font-subheading); font-size: 1rem; margin: 0 0 4px; }
+        .contact-detail p { color: var(--slm-gray-500); margin: 0; }
+        .contact-form-preview { background: var(--slm-white); border: 1px solid #e0e0d8; border-radius: var(--radius-lg); padding: 36px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-field { margin-bottom: 20px; }
+        .form-field label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; }
+        .form-field input, .form-field select, .form-field textarea { width: 100%; padding: 12px 16px; border: 1px solid #ccc; border-radius: var(--radius); font-family: var(--font-body); font-size: 0.95rem; outline: none; }
+        .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--slm-accent); }
+
+        /* 404 */
+        .error-page { padding: 100px 0; text-align: center; }
+        .error-code { font-family: var(--font-heading); font-size: 8rem; font-weight: 700; color: var(--slm-accent); line-height: 1; text-shadow: 2px 2px 0 #e0e0d8; }
+
+        @media (max-width:1024px) {
+            .hero-title { font-size: 2.8rem; }
+            .hero-slide { min-height: 500px; padding: 100px 0; }
+            .areas-grid { grid-template-columns: repeat(2,1fr); }
+            .features-grid { grid-template-columns: repeat(2,1fr); }
+            .testimonial-card { min-width: calc((100% - 24px) / 2); }
+            .footer-grid { grid-template-columns: repeat(2,1fr); }
+            .forum-layout { flex-direction: column; }
+            .forum-sidebar { width: 100%; }
+            .about-grid, .contact-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width:768px) {
+            .hero-slide { padding: 60px 0; min-height: 400px; }
+            .hero-title { font-size: 2rem; }
+            .hero-nav { bottom: 16px; gap: 12px; }
+            .hero-arrow { width: 36px; height: 36px; font-size: 0.85rem; }
+            .header-top-content { flex-direction: column; text-align: center; }
+            .header-contact { justify-content: center; }
+            .hero-actions { flex-direction: column; }
+            .hero-actions .btn { width: 100%; justify-content: center; }
+            .trust-bar { grid-template-columns: repeat(2,1fr); }
+            .trust-item:not(:last-child)::after { display: none; }
+            .areas-grid, .features-grid { grid-template-columns: 1fr; }
+            .testimonial-card { min-width: 100%; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .cta-box { flex-direction: column; text-align: center; padding: 40px 24px; }
+            .cta-actions { flex-direction: column; }
+            .cta-actions .btn { width: 100%; justify-content: center; }
+            .form-row { grid-template-columns: 1fr; }
+            .profile-header { flex-direction: column; text-align: center; }
+            .footer-bottom-content { flex-direction: column; text-align: center; gap: 8px; }
+            .preview-nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="preview-nav">
+    <div class="container">
+        <h2><i class="fas fa-eye"></i> Preview Tema - Studio Legale Mandroneniglio</h2>
+        <div class="preview-nav-links">
+            <a href="#home">Home</a>
+            <a href="#forum">Forum</a>
+            <a href="#profile">Profilo</a>
+            <a href="#contatti">Contatti</a>
+            <a href="#error404">404</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ====== HOMEPAGE ====== -->
+<section id="home">
+
+<header class="site-header">
+    <div class="header-top"><div class="container"><div class="header-top-content">
+        <div class="header-contact">
+            <span><i class="fas fa-phone"></i> <a href="tel:+390612345678">+39 06 12345678</a></span>
+            <span><i class="fas fa-envelope"></i> <a href="mailto:info@studiolegalemandroneniglio.it">info@studiolegalemandroneniglio.it</a></span>
+            <span><i class="fas fa-map-marker-alt"></i> Via dei Giureconsulti, 25 - 00186 Roma</span>
+        </div>
+        <div class="header-user-menu">
+            <a href="#"><i class="fas fa-sign-in-alt"></i> Accedi</a>
+            <a href="#"><i class="fas fa-user-plus"></i> Registrati</a>
+        </div>
+    </div></div></div>
+    <div class="header-main"><div class="container">
+        <div class="site-branding"><a href="#">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="8" fill="#C5A55A"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="#1B1B2F" font-size="20" font-weight="bold" font-family="serif">SL</text></svg>
+            <span><span class="site-title">Studio Legale Mandroneniglio</span><span class="site-description">Eccellenza legale dal 1985</span></span>
+        </a></div>
+        <nav><ul id="primary-menu">
+            <li class="current-menu-item"><a href="#">Home</a></li>
+            <li><a href="#">Lo Studio</a></li>
+            <li><a href="#">Aree di Diritto</a></li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Forum</a></li>
+            <li><a href="#">Contatti</a></li>
+        </ul></nav>
+    </div></div>
+</header>
+
+<!-- HERO SLIDER -->
+<div class="hero-section">
+    <div class="hero-slider" id="hero-slider">
+        <div class="hero-slide active" data-index="0">
+            <div class="hero-bg" style="background: linear-gradient(135deg, rgba(27,27,47,0.92) 0%, rgba(42,42,74,0.85) 50%, rgba(27,27,47,0.95) 100%), url('data:image/svg+xml,<svg width=\'1920\' height=\'800\' xmlns=\'http://www.w3.org/2000/svg\'><defs><pattern id=\'s\' patternUnits=\'userSpaceOnUse\' width=\'60\' height=\'60\'><path d=\'M0 30 L30 0 L60 30 L30 60 Z\' fill=\'none\' stroke=\'rgba(197,165,90,0.05)\' stroke-width=\'1\'/></pattern></defs><rect width=\'1920\' height=\'800\' fill=\'%231B1B2F\'/><rect width=\'1920\' height=\'800\' fill=\'url(%23s)\'/></svg>') center/cover no-repeat;">
+                <div class="hero-particles"></div>
+            </div>
+            <div class="container"><div class="hero-content">
+                <span class="hero-badge">Eccellenza legale dal 1985</span>
+                <h1 class="hero-title">Il tuo alleato legale di fiducia</h1>
+                <p class="hero-subtitle">Oltre 35 anni di esperienza al servizio dei nostri clienti. Competenza, dedizione e risultati concreti in ogni area del diritto.</p>
+                <div class="hero-actions">
+                    <a href="#" class="btn btn-primary btn-lg"><i class="fas fa-calendar-check"></i> Richiedi consulenza</a>
+                    <a href="#" class="btn btn-outline btn-lg"><i class="fas fa-info-circle"></i> Scopri lo Studio</a>
+                </div>
+            </div></div>
+        </div>
+        <div class="hero-slide" data-index="1">
+            <div class="hero-bg" style="background: linear-gradient(135deg, rgba(27,27,47,0.9) 0%, rgba(15,15,31,0.88) 50%, rgba(27,27,47,0.92) 100%), url('data:image/svg+xml,<svg width=\'1920\' height=\'800\' xmlns=\'http://www.w3.org/2000/svg\'><defs><pattern id=\'s2\' patternUnits=\'userSpaceOnUse\' width=\'60\' height=\'60\'><path d=\'M0 30 L30 0 L60 30 L30 60 Z\' fill=\'none\' stroke=\'rgba(197,165,90,0.05)\' stroke-width=\'1\'/></pattern></defs><rect width=\'1920\' height=\'800\' fill=\'%231B1B2F\'/><rect width=\'1920\' height=\'800\' fill=\'url(%23s2)\'/></svg>') center/cover no-repeat;">
+                <div class="hero-particles"></div>
+            </div>
+            <div class="container"><div class="hero-content">
+                <span class="hero-badge">Professionisti al tuo servizio</span>
+                <h1 class="hero-title">Un team di esperti per ogni esigenza</h1>
+                <p class="hero-subtitle">Avvocati specializzati in diritto civile, penale, amministrativo, famiglia, lavoro e societario. Ogni caso è affidato al professionista più qualificato.</p>
+                <div class="hero-actions">
+                    <a href="#" class="btn btn-primary btn-lg"><i class="fas fa-users"></i> Conosci il Team</a>
+                    <a href="#" class="btn btn-outline btn-lg"><i class="fas fa-calendar-alt"></i> Prenota un incontro</a>
+                </div>
+            </div></div>
+        </div>
+        <div class="hero-slide" data-index="2">
+            <div class="hero-bg" style="background: linear-gradient(135deg, rgba(27,27,47,0.93) 0%, rgba(42,42,74,0.8) 50%, rgba(27,27,47,0.9) 100%), url('data:image/svg+xml,<svg width=\'1920\' height=\'800\' xmlns=\'http://www.w3.org/2000/svg\'><defs><pattern id=\'s3\' patternUnits=\'userSpaceOnUse\' width=\'60\' height=\'60\'><path d=\'M0 30 L30 0 L60 30 L30 60 Z\' fill=\'none\' stroke=\'rgba(197,165,90,0.05)\' stroke-width=\'1\'/></pattern></defs><rect width=\'1920\' height=\'800\' fill=\'%231B1B2F\'/><rect width=\'1920\' height=\'800\' fill=\'url(%23s3)\'/></svg>') center/cover no-repeat;">
+                <div class="hero-particles"></div>
+            </div>
+            <div class="container"><div class="hero-content">
+                <span class="hero-badge">Risultati concreti</span>
+                <h1 class="hero-title">Oltre 3.500 cause vinte</h1>
+                <p class="hero-subtitle">Un track record di successi che parla da solo. Ogni cliente è una storia di impegno, competenza e dedizione alla giustizia.</p>
+                <div class="hero-actions">
+                    <a href="#" class="btn btn-primary btn-lg"><i class="fas fa-gavel"></i> I nostri servizi</a>
+                    <a href="#" class="btn btn-outline btn-lg"><i class="fas fa-comments"></i> Forum Legale</a>
+                </div>
+            </div></div>
+        </div>
+        <div class="hero-slide" data-index="3">
+            <div class="hero-bg" style="background: linear-gradient(135deg, rgba(27,27,47,0.9) 0%, rgba(15,15,31,0.85) 50%, rgba(42,42,74,0.9) 100%), url('data:image/svg+xml,<svg width=\'1920\' height=\'800\' xmlns=\'http://www.w3.org/2000/svg\'><defs><pattern id=\'s4\' patternUnits=\'userSpaceOnUse\' width=\'60\' height=\'60\'><path d=\'M0 30 L30 0 L60 30 L30 60 Z\' fill=\'none\' stroke=\'rgba(197,165,90,0.05)\' stroke-width=\'1\'/></pattern></defs><rect width=\'1920\' height=\'800\' fill=\'%231B1B2F\'/><rect width=\'1920\' height=\'800\' fill=\'url(%23s4)\'/></svg>') center/cover no-repeat;">
+                <div class="hero-particles"></div>
+            </div>
+            <div class="container"><div class="hero-content">
+                <span class="hero-badge">Diritto nell'era digitale</span>
+                <h1 class="hero-title">Consulenza legale moderna e accessibile</h1>
+                <p class="hero-subtitle">Un approccio innovativo che unisce tradizione giuridica e tecnologia. Assistenza online e comunicazione trasparente.</p>
+                <div class="hero-actions">
+                    <a href="#" class="btn btn-primary btn-lg"><i class="fas fa-video"></i> Consulenza Online</a>
+                    <a href="#" class="btn btn-outline btn-lg"><i class="fas fa-user-plus"></i> Area Riservata</a>
+                </div>
+            </div></div>
+        </div>
+    </div>
+    <div class="hero-nav">
+        <button class="hero-arrow hero-prev" aria-label="Precedente"><i class="fas fa-chevron-left"></i></button>
+        <div class="hero-dots">
+            <button class="hero-dot active" data-slide="0" aria-label="Slide 1"></button>
+            <button class="hero-dot" data-slide="1" aria-label="Slide 2"></button>
+            <button class="hero-dot" data-slide="2" aria-label="Slide 3"></button>
+            <button class="hero-dot" data-slide="3" aria-label="Slide 4"></button>
+        </div>
+        <button class="hero-arrow hero-next" aria-label="Successivo"><i class="fas fa-chevron-right"></i></button>
+    </div>
+    <div class="hero-progress"><div class="hero-progress-bar"></div></div>
+</div>
+
+<!-- TRUST -->
+<div class="trust-section"><div class="container"><div class="trust-bar">
+    <div class="trust-item"><span class="trust-number" data-target="1200">0</span><span class="trust-label">Clienti assistiti</span></div>
+    <div class="trust-item"><span class="trust-number" data-target="3500">0</span><span class="trust-label">Cause vinte</span></div>
+    <div class="trust-item"><span class="trust-number" data-target="38">0</span><span class="trust-label">Anni di esperienza</span></div>
+    <div class="trust-item"><span class="trust-number" data-target="98">0</span><span class="trust-label-perc" style="font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;color:var(--slm-accent);line-height:1.1;display:block">%</span><span class="trust-label">Casi risolti</span></div>
+</div></div></div>
+
+<!-- AREAS -->
+<div class="areas-section"><div class="container">
+    <div class="section-header fade-in">
+        <span class="section-badge">Aree di competenza</span>
+        <h2 class="section-title">I nostri settori di diritto</h2>
+        <p class="section-desc" style="color:#666;">Offriamo consulenza e assistenza legale a 360 gradi.</p>
+    </div>
+    <div class="areas-grid">
+        <a href="#" class="area-card fade-in"><div class="area-icon"><svg width="60" height="60" viewBox="0 0 60 60" fill="none"><rect width="60" height="60" rx="15" fill="rgba(197,165,90,0.1)"/><path d="M30 15L37 22H33V32H27V22H23L30 15Z" fill="#C5A55A"/><rect x="20" y="33" width="20" height="3" rx="1.5" fill="#C5A55A"/></svg></div><h3>Diritto Civile</h3><p>Contratti, responsabilità civile, risarcimento danni, proprietà e obbligazioni.</p><span class="area-link">Scopri di più <i class="fas fa-arrow-right"></i></span></a>
+        <a href="#" class="area-card fade-in"><div class="area-icon"><svg width="60" height="60" viewBox="0 0 60 60" fill="none"><rect width="60" height="60" rx="15" fill="rgba(197,165,90,0.1)"/><path d="M42 20L40 18L38 20L36 18L34 20L30 16L34 12L36 14L38 12L40 14L42 12L46 16L42 20Z" fill="#C5A55A"/><circle cx="35" cy="30" r="7" fill="#C5A55A"/></svg></div><h3>Diritto Penale</h3><p>Difesa penale, diritto penale dell'economia, reati societari e tributari.</p><span class="area-link">Scopri di più <i class="fas fa-arrow-right"></i></span></a>
+        <a href="#" class="area-card fade-in"><div class="area-icon"><svg width="60" height="60" viewBox="0 0 60 60" fill="none"><rect width="60" height="60" rx="15" fill="rgba(197,165,90,0.1)"/><rect x="18" y="18" width="24" height="10" rx="2" fill="#C5A55A"/><rect x="20" y="32" width="20" height="3" rx="1.5" fill="#C5A55A"/></svg></div><h3>Diritto Amministrativo</h3><p>Ricorsi amministrativi, appalti pubblici, edilizia e urbanistica.</p><span class="area-link">Scopri di più <i class="fas fa-arrow-right"></i></span></a>
+        <a href="#" class="area-card fade-in"><div class="area-icon"><svg width="60" height="60" viewBox="0 0 60 60" fill="none"><rect width="60" height="60" rx="15" fill="rgba(197,165,90,0.1)"/><circle cx="22" cy="22" r="5" fill="#C5A55A"/><circle cx="38" cy="22" r="5" fill="#C5A55A"/><circle cx="30" cy="30" r="4" fill="#C5A55A"/><path d="M22 40C22 35.5 24 33 30 33C36 33 38 35.5 38 40V42H22V40Z" fill="#C5A55A"/></svg></div><h3>Diritto di Famiglia</h3><p>Separazioni, divorzi, affidamento minori, adozioni e successioni.</p><span class="area-link">Scopri di più <i class="fas fa-arrow-right"></i></span></a>
+        <a href="#" class="area-card fade-in"><div class="area-icon"><svg width="60" height="60" viewBox="0 0 60 60" fill="none"><rect width="60" height="60" rx="15" fill="rgba(197,165,90,0.1)"/><rect x="20" y="24" width="20" height="12" rx="2" fill="#C5A55A"/><path d="M27 24V22C27 20.5 28 19 30 19C32 19 33 20.5 33 22V24" stroke="#1B1B2F" stroke-width="2"/></svg></div><h3>Diritto del Lavoro</h3><p>Rapporti di lavoro, licenziamenti, infortuni e previdenza sociale.</p><span class="area-link">Scopri di più <i class="fas fa-arrow-right"></i></span></a>
+        <a href="#" class="area-card fade-in"><div class="area-icon"><svg width="60" height="60" viewBox="0 0 60 60" fill="none"><rect width="60" height="60" rx="15" fill="rgba(197,165,90,0.1)"/><rect x="16" y="22" width="12" height="18" rx="2" fill="#C5A55A"/><rect x="32" y="16" width="12" height="24" rx="2" fill="#C5A55A"/></svg></div><h3>Diritto Societario</h3><p>Costituzione società, fusioni, acquisizioni, contratti commerciali.</p><span class="area-link">Scopri di più <i class="fas fa-arrow-right"></i></span></a>
+    </div>
+</div></div>
+
+<!-- ABOUT + PARALLAX -->
+<div class="about-section parallax-section">
+    <div class="parallax-bg" style="background: linear-gradient(135deg, rgba(27,27,47,0.03), rgba(197,165,90,0.05));"></div>
+    <div class="container"><div class="about-grid">
+        <div class="about-content fade-in">
+            <span class="section-badge">Chi siamo</span>
+            <h2>Oltre 35 anni al servizio della giustizia</h2>
+            <p>Lo Studio Legale Mandroneniglio nasce a Roma nel 1985 dalla visione del fondatore, l'Avv. Marco Mandroneniglio. Da oltre tre decenni offriamo assistenza legale di alto profilo, combinando competenza tecnica e approccio personalizzato.</p>
+            <p>Il nostro team è composto da avvocati specializzati in diverse aree del diritto, accomunati dalla passione per la giustizia.</p>
+            <div class="about-features">
+                <div class="feature"><i class="fas fa-check-circle"></i><span>Team multidisciplinare</span></div>
+                <div class="feature"><i class="fas fa-check-circle"></i><span>Assistenza personalizzata</span></div>
+                <div class="feature"><i class="fas fa-check-circle"></i><span>Trasparenza dei costi</span></div>
+                <div class="feature"><i class="fas fa-check-circle"></i><span>Aggiornamento costante</span></div>
+            </div>
+            <a href="#" class="btn btn-primary">Conosci il team <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="about-image fade-in">
+            <div class="about-placeholder"><svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="60" stroke="#C5A55A" stroke-width="2" opacity="0.5"/><text x="100" y="105" text-anchor="middle" font-family="Cinzel,serif" font-size="28" fill="#C5A55A" font-weight="700">SLM</text></svg></div>
+            <div class="about-experience-badge"><span class="years">38+</span><span class="text">Anni di esperienza</span></div>
+        </div>
+    </div></div>
+</div>
+
+<!-- FEATURES -->
+<div class="features-section"><div class="container">
+    <div class="section-header fade-in">
+        <span class="section-badge">Perché sceglierci</span>
+        <h2 class="section-title">Il nostro valore aggiunto</h2>
+    </div>
+    <div class="features-grid">
+        <div class="feature-card fade-in"><div class="feature-card-icon"><i class="fas fa-gavel"></i></div><h3>Competenza</h3><p>Specialisti in molteplici rami del diritto con aggiornamento continuo.</p></div>
+        <div class="feature-card fade-in"><div class="feature-card-icon"><i class="fas fa-handshake"></i></div><h3>Affidabilità</h3><p>Oltre 3500 cause gestite con successo. La reputazione ci precede.</p></div>
+        <div class="feature-card fade-in"><div class="feature-card-icon"><i class="fas fa-users"></i></div><h3>Team dedicato</h3><p>Ogni cliente ha un referente diretto che segue il caso dall'inizio alla fine.</p></div>
+    </div>
+</div></div>
+
+<!-- TESTIMONIALS CAROUSEL -->
+<div class="testimonials-section"><div class="container">
+    <div class="section-header fade-in">
+        <span class="section-badge" style="background:rgba(197,165,90,0.15);">Testimonianze</span>
+        <h2 class="section-title">Cosa dicono i nostri clienti</h2>
+    </div>
+    <div class="testimonials-carousel" id="testimonials-carousel">
+        <div class="testimonials-track">
+            <div class="testimonial-card"><div class="testimonial-stars">★★★★★</div><p class="testimonial-text">"Ho affidato allo Studio Mandroneniglio una complessa causa civile. Professionalità, competenza e grande umanità."</p><div class="testimonial-author"><div class="avatar">MR</div><div><strong>Mario R.</strong><span>Diritto Civile</span></div></div></div>
+            <div class="testimonial-card"><div class="testimonial-stars">★★★★★</div><p class="testimonial-text">"L'Avv. Mandroneniglio mi ha seguita in una delicata causa di separazione. Sensibilità e competenza fuori dal comune."</p><div class="testimonial-author"><div class="avatar">LF</div><div><strong>Laura F.</strong><span>Diritto di Famiglia</span></div></div></div>
+            <div class="testimonial-card"><div class="testimonial-stars">★★★★★</div><p class="testimonial-text">"Eccellente studio legale. Preparazione e tempestività nella gestione delle pratiche. Li raccomando senza riserve."</p><div class="testimonial-author"><div class="avatar">GV</div><div><strong>Giuseppe V.</strong><span>Diritto Amministrativo</span></div></div></div>
+            <div class="testimonial-card"><div class="testimonial-stars">★★★★★</div><p class="testimonial-text">"Professionalità senza pari. Mi hanno assistito in una causa societaria con risultati che superano ogni aspettativa."</p><div class="testimonial-author"><div class="avatar">AC</div><div><strong>Andrea C.</strong><span>Diritto Societario</span></div></div></div>
+            <div class="testimonial-card"><div class="testimonial-stars">★★★★★</div><p class="testimonial-text">"Competenza e umanità. L'Avv. Bianchi è stata incredibile nel seguire la mia pratica. Consiglio vivamente."</p><div class="testimonial-author"><div class="avatar">EM</div><div><strong>Elena M.</strong><span>Diritto del Lavoro</span></div></div></div>
+            <div class="testimonial-card"><div class="testimonial-stars">★★★★★</div><p class="testimonial-text">"Veloci, precisi, trasparenti. Tutto ciò che si cerca in uno studio legale. Li ringrazierò sempre."</p><div class="testimonial-author"><div class="avatar">RF</div><div><strong>Roberto F.</strong><span>Diritto Penale</span></div></div></div>
+        </div>
+        <div class="testimonials-nav">
+            <button class="testimonial-arrow testimonial-prev"><i class="fas fa-chevron-left"></i></button>
+            <div class="testimonial-dots"></div>
+            <button class="testimonial-arrow testimonial-next"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </div>
+</div></div>
+
+<!-- FORUM PREVIEW -->
+<div class="forum-preview-section"><div class="container">
+    <div class="section-header fade-in">
+        <span class="section-badge">Community</span>
+        <h2 class="section-title">Forum Legale</h2>
+        <p class="section-desc" style="color:#666;">Uno spazio di confronto e informazione legale. Poni domande e ricevi risposte dai nostri esperti.</p>
+    </div>
+    <div class="forum-cta fade-in" style="text-align:center;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:40px;">
+        <a href="#forum" class="btn btn-primary btn-lg"><i class="fas fa-comments"></i> Visita il Forum</a>
+        <a href="#" class="btn btn-outline btn-lg" style="color:#A8883A!important;border-color:var(--slm-accent);color:var(--slm-accent)!important;"><i class="fas fa-user-plus"></i> Registrati</a>
+    </div>
+    <div class="recent-topics fade-in">
+        <h3>Discussioni recenti</h3>
+        <div class="topics-list">
+            <div class="topic-item"><a href="#" style="display:flex;justify-content:space-between;width:100%;text-decoration:none;"><span class="topic-title">Come procedere per separazione consensuale?</span><span class="topic-meta">3 repliche · Avv. Bianchi</span></a></div>
+            <div class="topic-item"><a href="#" style="display:flex;justify-content:space-between;width:100%;text-decoration:none;"><span class="topic-title">Ricorso al TAR - tempi e modalità</span><span class="topic-meta">5 repliche · Mario R.</span></a></div>
+            <div class="topic-item"><a href="#" style="display:flex;justify-content:space-between;width:100%;text-decoration:none;"><span class="topic-title">Licenziamento ingiustificato: cosa fare?</span><span class="topic-meta">2 repliche · Studio Legale</span></a></div>
+        </div>
+    </div>
+</div></div>
+
+<!-- CTA -->
+<div class="contact-cta-section"><div class="container">
+    <div class="cta-box fade-in">
+        <div class="cta-content"><h2>Hai bisogno di assistenza legale?</h2><p>Contattaci per una prima valutazione gratuita del tuo caso. Rispondiamo in massimo 24 ore.</p></div>
+        <div class="cta-actions">
+            <a href="#contatti" class="btn btn-primary btn-lg"><i class="fas fa-envelope"></i> Contattaci ora</a>
+            <a href="tel:+390612345678" class="btn btn-outline btn-lg"><i class="fas fa-phone"></i> +39 06 12345678</a>
+        </div>
+    </div>
+</div></div>
+
+<footer class="site-footer"><div class="footer-widgets"><div class="container"><div class="footer-grid">
+    <div class="footer-col"><h3 style="color:var(--slm-white);font-family:var(--font-heading);">Studio Legale Mandroneniglio</h3><p>Consulenza legale professionale nei settori del diritto civile, penale e amministrativo.</p></div>
+    <div class="footer-col"><h4 class="footer-title">Contatti</h4><ul class="footer-contact"><li><i class="fas fa-map-marker-alt"></i> Via dei Giureconsulti, 25 - 00186 Roma</li><li><i class="fas fa-phone"></i> +39 06 12345678</li><li><i class="fas fa-envelope"></i> info@studiolegalemandroneniglio.it</li><li><i class="fas fa-clock"></i> Lun-Ven: 09:00 - 19:00</li></ul></div>
+    <div class="footer-col"><h4 class="footer-title">Aree di Diritto</h4><ul class="footer-links"><li><a href="#">Diritto Civile</a></li><li><a href="#">Diritto Penale</a></li><li><a href="#">Diritto Amministrativo</a></li><li><a href="#">Diritto di Famiglia</a></li><li><a href="#">Diritto del Lavoro</a></li></ul></div>
+    <div class="footer-col"><h4 class="footer-title">Seguici</h4><div class="social-links"><a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a><a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a><a href="#" class="social-link"><i class="fab fa-youtube"></i></a><a href="#" class="social-link"><i class="fab fa-instagram"></i></a></div><h4 class="footer-title">Newsletter</h4><form class="newsletter-form" style="display:flex;"><input type="email" placeholder="La tua email" style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(197,165,90,0.2);border-right:none;border-radius:var(--radius) 0 0 var(--radius);color:var(--slm-white);outline:none;"><button type="submit" style="padding:10px 16px;background:var(--slm-accent);border:none;border-radius:0 var(--radius) var(--radius) 0;color:var(--slm-primary);cursor:pointer;"><i class="fas fa-paper-plane"></i></button></form></div>
+</div></div></div>
+<div class="footer-bottom"><div class="container"><div class="footer-bottom-content" style="display:flex;justify-content:space-between;align-items:center;font-size:0.85rem;">
+    <p>&copy; 2025 <strong>Studio Legale Mandroneniglio</strong>. Tutti i diritti riservati.</p>
+    <p style="color:#666;margin:0;">P.IVA 01234567890</p>
+</div></div></div></footer>
+
+</section>
+
+<!-- ====== FORUM PAGE ====== -->
+<section id="forum" class="forum-page" style="border-top:2px solid #e0e0d8;"><div class="container">
+    <div class="page-intro"><span class="section-badge">Community</span><h1>Forum Legale</h1><p>Uno spazio di confronto e informazione legale.</p></div>
+    <div class="forum-layout">
+        <div class="forum-sidebar">
+            <div class="forum-categories"><h3>Categorie</h3><ul class="forum-cat-list"><li class="active"><a href="#">Tutte</a></li><li><a href="#">Diritto Civile (12)</a></li><li><a href="#">Diritto Penale (8)</a></li><li><a href="#">Diritto Amministrativo (5)</a></li><li><a href="#">Diritto di Famiglia (9)</a></li><li><a href="#">Diritto del Lavoro (6)</a></li></ul></div>
+            <a href="#" class="btn btn-primary" style="display:block;text-align:center;"><i class="fas fa-plus"></i> Nuova Discussione</a>
+        </div>
+        <div class="forum-content">
+            <div class="forum-topics-header"><h2>Discussioni</h2><span class="topic-count" style="color:#999;">42 discussioni</span></div>
+            <div class="forum-topics-list">
+                <div class="forum-topic-item pinned"><div class="topic-indicator"><span class="pinned"><i class="fas fa-thumbtack"></i></span></div><div class="topic-main"><h3 class="topic-title"><a href="#">Benvenuti nel Forum dello Studio Legale Mandroneniglio</a></h3><div class="topic-meta"><span>Da Avv. Mandroneniglio</span><span>1 Mar 2025</span></div></div><div class="topic-stats"><span class="topic-replies"><i class="fas fa-comment"></i> 15</span></div></div>
+                <div class="forum-topic-item"><div class="topic-indicator"></div><div class="topic-main"><h3 class="topic-title"><a href="#">Come procedere per separazione consensuale?</a></h3><div class="topic-meta"><span>Da Laura F.</span><span>15 Mar 2025</span></div></div><div class="topic-stats"><span class="topic-replies"><i class="fas fa-comment"></i> 3</span></div></div>
+                <div class="forum-topic-item"><div class="topic-indicator"></div><div class="topic-main"><h3 class="topic-title"><a href="#">Ricorso al TAR - tempi e modalità</a></h3><div class="topic-meta"><span>Da Mario R.</span><span>10 Mar 2025</span></div></div><div class="topic-stats"><span class="topic-replies"><i class="fas fa-comment"></i> 5</span></div></div>
+                <div class="forum-topic-item closed"><div class="topic-indicator"><span class="closed"><i class="fas fa-lock"></i></span></div><div class="topic-main"><h3 class="topic-title"><a href="#">Questione risolta - Usufrutto e nuda proprietà</a></h3><div class="topic-meta"><span>Da Giuseppe V.</span><span>5 Mar 2025</span></div></div><div class="topic-stats"><span class="topic-replies"><i class="fas fa-comment"></i> 8</span></div></div>
+                <div class="forum-topic-item"><div class="topic-indicator"></div><div class="topic-main"><h3 class="topic-title"><a href="#">Licenziamento ingiustificato: quali sono i miei diritti?</a></h3><div class="topic-meta"><span>Da Anna B.</span><span>28 Feb 2025</span></div></div><div class="topic-stats"><span class="topic-replies"><i class="fas fa-comment"></i> 2</span></div></div>
+            </div>
+        </div>
+    </div>
+</div></section>
+
+<!-- ====== PROFILE PAGE ====== -->
+<section id="profile" class="profile-page"><div class="container">
+    <div class="page-intro"><span class="section-badge">Utente</span><h1>Profilo Utente</h1></div>
+    <div class="profile-header" style="background:#f0f0eb;border-radius:var(--radius-lg);padding:32px;display:flex;align-items:center;gap:32px;max-width:800px;">
+        <div class="profile-avatar">MR</div>
+        <div class="profile-info"><h2>Mario Rossi</h2><p style="color:#666;">mario.rossi@email.it</p><p style="color:#999;font-size:0.85rem;">Membro dal 15 Gennaio 2025</p></div>
+    </div>
+    <div class="profile-details" style="max-width:800px;background:var(--slm-white);border:1px solid #e0e0d8;border-radius:var(--radius-lg);padding:32px;">
+        <h3 style="font-family:var(--font-subheading);font-size:1.2rem;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid var(--slm-accent);">Dettagli Profilo</h3>
+        <p><strong>Telefono:</strong> +39 333 1234567</p>
+        <p><strong>Professione:</strong> Privato</p>
+        <p><strong>Area di interesse:</strong> Diritto Civile</p>
+        <div class="profile-actions"><a href="#" class="btn btn-primary">Modifica Profilo</a><a href="#" class="btn btn-secondary">Le mie discussioni</a></div>
+    </div>
+</div></section>
+
+<!-- ====== CONTATTI ====== -->
+<section id="contatti" style="padding:60px 0;background:#f5f5f0;"><div class="container">
+    <div class="section-header"><span class="section-badge">Contatti</span><h2 class="section-title">Contattaci</h2><p style="color:#666;">Siamo a tua disposizione per qualsiasi chiarimento o consulenza.</p></div>
+    <div class="contact-grid" style="display:grid;grid-template-columns:1fr 1.2fr;gap:48px;">
+        <div><div class="contact-detail"><div class="detail-icon"><i class="fas fa-map-marker-alt"></i></div><div><h4>Indirizzo</h4><p>Via dei Giureconsulti, 25<br>00186 Roma</p></div></div>
+        <div class="contact-detail"><div class="detail-icon"><i class="fas fa-phone"></i></div><div><h4>Telefono</h4><p><a href="tel:+390612345678">+39 06 12345678</a></p></div></div>
+        <div class="contact-detail"><div class="detail-icon"><i class="fas fa-envelope"></i></div><div><h4>Email</h4><p><a href="mailto:info@studiolegalemandroneniglio.it">info@studiolegalemandroneniglio.it</a></p></div></div>
+        <div class="contact-detail"><div class="detail-icon"><i class="fas fa-clock"></i></div><div><h4>Orari</h4><p>Lun-Ven: 09:00-19:00<br>Sab: 09:00-13:00 (su app.)</p></div></div></div>
+        <div class="contact-form-preview" style="background:var(--slm-white);border:1px solid #e0e0d8;border-radius:var(--radius-lg);padding:36px;">
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;"><div class="form-field"><label>Nome *</label><input type="text"></div><div class="form-field"><label>Email *</label><input type="email"></div></div>
+            <div class="form-field"><label>Messaggio *</label><textarea rows="6" style="width:100%;padding:12px;border:1px solid #ccc;border-radius:var(--radius);"></textarea></div>
+            <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;"><i class="fas fa-paper-plane"></i> Invia Messaggio</button>
+        </div>
+    </div>
+</div></section>
+
+<!-- 404 -->
+<section id="error404" class="error-page"><div class="container">
+    <div class="error-code">404</div>
+    <h2>Pagina non trovata</h2>
+    <p style="color:#666;">La pagina che stai cercando potrebbe essere stata spostata o rimossa.</p>
+    <div class="hero-actions" style="justify-content:center;margin-top:24px;">
+        <a href="#home" class="btn btn-primary"><i class="fas fa-home"></i> Torna alla Home</a>
+        <a href="#contatti" class="btn btn-secondary"><i class="fas fa-envelope"></i> Contattaci</a>
+    </div>
+</div></section>
+
+<script>
+// Hero Slider
+(function(){
+    var slider = document.getElementById('hero-slider');
+    if(!slider)return;
+    var slides = slider.querySelectorAll('.hero-slide');
+    var dots = document.querySelectorAll('.hero-dot');
+    var prevBtn = document.querySelector('.hero-prev');
+    var nextBtn = document.querySelector('.hero-next');
+    var progressBar = document.querySelector('.hero-progress-bar');
+    if(!slides.length)return;
+    var current=0,total=slides.length,interval=5000,timer,progressTimer,progress=0;
+    function goTo(index){
+        slides.forEach(function(s){s.classList.remove('active');});
+        dots.forEach(function(d){d.classList.remove('active');});
+        current=(index+total)%total;
+        slides[current].classList.add('active');
+        if(dots[current])dots[current].classList.add('active');
+        progress=0;
+        if(progressBar)progressBar.style.width='0%';
+        clearInterval(progressTimer);
+        progressTimer=setInterval(function(){progress+=100/(interval/100);if(progressBar)progressBar.style.width=Math.min(progress,100)+'%';},100);
+    }
+    function nextSlide(){goTo(current+1);resetTimer();}
+    function prevSlide(){goTo(current-1);resetTimer();}
+    function resetTimer(){clearInterval(timer);timer=setInterval(nextSlide,interval);}
+    if(prevBtn)prevBtn.addEventListener('click',prevSlide);
+    if(nextBtn)nextBtn.addEventListener('click',nextSlide);
+    dots.forEach(function(dot){dot.addEventListener('click',function(){var idx=parseInt(this.getAttribute('data-slide'),10);goTo(idx);resetTimer();});});
+    slider.addEventListener('mouseenter',function(){clearInterval(timer);clearInterval(progressTimer);});
+    slider.addEventListener('mouseleave',function(){resetTimer();});
+    goTo(0);timer=setInterval(nextSlide,interval);
+})();
+
+// Counters
+(function(){
+    var nums=document.querySelectorAll('.trust-number');
+    if(!nums.length)return;
+    var done=false;
+    function animate(){
+        if(done)return;
+        var rect=nums[0].closest('.trust-section').getBoundingClientRect();
+        if(rect.top<window.innerHeight-100){
+            done=true;
+            nums.forEach(function(el){
+                var target=parseInt(el.getAttribute('data-target'),10);
+                var current=0,inc=target/60;
+                var counter=setInterval(function(){current+=inc;if(current>=target){el.textContent=target;clearInterval(counter);}else{el.textContent=Math.floor(current);}},33);
+            });
+        }
+    }
+    window.addEventListener('scroll',animate);
+    window.addEventListener('load',animate);
+    animate();
+})();
+
+// Fade-in
+(function(){
+    var els=document.querySelectorAll('.fade-in');
+    function check(){var wh=window.innerHeight;els.forEach(function(el){var r=el.getBoundingClientRect();if(r.top<wh-60)el.classList.add('visible');});}
+    window.addEventListener('scroll',check);window.addEventListener('load',check);check();
+})();
+
+// Testimonials Carousel
+(function(){
+    var c=document.getElementById('testimonials-carousel');
+    if(!c)return;
+    var t=c.querySelector('.testimonials-track');
+    var cards=t.querySelectorAll('.testimonial-card');
+    var p=c.querySelector('.testimonial-prev'),n=c.querySelector('.testimonial-next');
+    var dc=c.querySelector('.testimonial-dots');
+    if(!cards.length)return;
+    var cur=0,vis=3,totalSlides=cards.length;
+    function upd(){if(window.innerWidth<=768)vis=1;else if(window.innerWidth<=1024)vis=2;else vis=3;}
+    upd();
+    function renderDots(){
+        if(!dc)return;
+        var cnt=Math.max(1,totalSlides-vis+1);
+        dc.innerHTML='';
+        for(var i=0;i<cnt;i++){var d=document.createElement('button');d.className='dot'+(i===cur?' active':'');d.setAttribute('data-idx',i);d.addEventListener('click',function(){go(parseInt(this.getAttribute('data-idx'),10));});dc.appendChild(d);}
+    }
+    renderDots();
+    function go(idx){upd();var maxI=Math.max(0,totalSlides-vis);cur=Math.max(0,Math.min(idx,maxI));var off=-(cur*(100/vis));t.style.transform='translateX('+off+'%)';var dots=dc.querySelectorAll('.dot');dots.forEach(function(d,i){d.classList.toggle('active',i===cur);});}
+    function nextT(){go(cur+1);}
+    function prevT(){go(cur-1);}
+    if(p)p.addEventListener('click',prevT);
+    if(n)n.addEventListener('click',nextT);
+    var at=setInterval(nextT,5000);
+    c.addEventListener('mouseenter',function(){clearInterval(at);});
+    c.addEventListener('mouseleave',function(){at=setInterval(nextT,5000);});
+    window.addEventListener('resize',function(){go(cur);renderDots();});
+})();
+
+// Smooth anchor scroll
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+        var id=this.getAttribute('href');if(id==='#')return;
+        var el=document.querySelector(id);if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth',block:'start'});}
+    });
+});
+</script>
+</body>
+</html>
