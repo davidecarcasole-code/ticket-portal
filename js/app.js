@@ -253,12 +253,9 @@ const auth = {
     app.closeModal('registerModal');
     document.getElementById('loginError').textContent = 'Registrazione inviata! Attendi l\'approvazione dell\'amministratore.';
     document.getElementById('loginError').style.color = 'var(--success)';
-    const admin = list.find(u => u.role === 'admin');
-    if (admin) {
-      getNotifs();
-      addNotif('Nuova richiesta registrazione', `${name} (${username}) ha richiesto di registrarsi.`, admin.id, false, 'user-plus');
-      setNotifs(getNotifs());
-    }
+    notify.add('Nuova richiesta registrazione', `${name} (@${username}) ha richiesto di registrarsi.`);
+    const pBadge = document.getElementById('pendingBadge');
+    if (pBadge) { const c = +pBadge.textContent; pBadge.textContent = c + 1; pBadge.style.display = 'inline'; }
     app.toast('Richiesta di registrazione inviata!', 'success');
   },
   login() {
