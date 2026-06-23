@@ -127,6 +127,7 @@ function migrateTickets(list) {
       const creator = getUser(t.createdBy);
       t.sede = creator ? creator.sede || '' : '';
     }
+    if (!t.ip) t.ip = '';
     return t;
   });
 }
@@ -1270,7 +1271,7 @@ const tickets = {
       document.getElementById('ticketAssignee').closest('.form-group').style.display = 'none';
     }
   },
-  create(e) {
+  async create(e) {
     e.preventDefault();
     const title = document.getElementById('ticketTitle').value.trim();
     const category = document.getElementById('ticketCategory').value;
@@ -1283,9 +1284,15 @@ const tickets = {
       sede = currentUser.sede || '';
     }
     if (!title || !description) { app.toast('Compila tutti i campi obbligatori', 'error'); return; }
+    let clientIP = 'N/D';
+    try {
+      const ipResp = await fetch('https://api.ipify.org?format=json').catch(() => ({ json: () => ({ ip: 'N/D' }) }));
+      const ipData = await ipResp.json();
+      clientIP = ipData.ip || 'N/D';
+    } catch(e) {}
     const ticket = {
       id: uid(),
-      title, description, category, priority, sede,
+      title, description, category, priority, sede, ip: clientIP,
       status: 'Aperto',
       createdBy: currentUser.id,
       assignedTo,
@@ -1328,6 +1335,7 @@ const tickets = {
           <span class="badge badge-${t.priority.toLowerCase()}"><i class="fas fa-flag"></i> ${t.priority}</span>
           <span><i class="fas fa-user"></i> ${user ? user.name : 'Sconosciuto'}</span>
           ${t.sede ? `<span><i class="fas fa-building"></i> ${t.sede}</span>` : ''}
+          ${t.ip ? `<span><i class="fas fa-network-wired"></i> IP: ${t.ip}</span>` : ''}
           ${assignee ? `<span><i class="fas fa-user-check"></i> Assegnato: ${assignee.name}</span>` : '<span style="color:var(--text-secondary)"><i class="fas fa-user-times"></i> Non assegnato</span>'}
         </div>
         <div class="ticket-detail-body">
