@@ -4,13 +4,12 @@ let firestoreReady = false;
 function initFirebase() {
   if (typeof firebase === 'undefined') return;
   const firebaseConfig = {
-    apiKey: "AIzaSyBuD88K2qylq69vFnSbOlcOm0WSQTLG0TA",
-    authDomain: "alelatina-3aed9.firebaseapp.com",
-    projectId: "alelatina-3aed9",
-    storageBucket: "alelatina-3aed9.firebasestorage.app",
-    messagingSenderId: "609389381567",
-    appId: "1:609389381567:web:661c37fcb5585d0325c30a",
-    measurementId: "G-P8BBF9Q02N"
+    apiKey: "AIzaSyB0M1Wo5zUJQOyE7P_535AyhhHmASY3IGk",
+    authDomain: "ticket-data-b9859.firebaseapp.com",
+    projectId: "ticket-data-b9859",
+    storageBucket: "ticket-data-b9859.firebasestorage.app",
+    messagingSenderId: "177133711441",
+    appId: "1:177133711441:web:8246c6c84a493e03cc8870"
   };
   if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
   db = firebase.firestore();
