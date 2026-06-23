@@ -25,6 +25,7 @@ if (firestoreReady) {
       syncToFirestore('sedi');
       syncToFirestore('emailjs');
       syncToFirestore('pmessages');
+      syncToFirestore('notifs');
     }
     document.documentElement.setAttribute('data-theme', getData('theme', 'default'));
     setTimeout(autoLogin, 200);
@@ -271,7 +272,9 @@ const auth = {
     app.closeModal('registerModal');
     document.getElementById('loginError').textContent = 'Registrazione inviata! Attendi l\'approvazione dell\'amministratore.';
     document.getElementById('loginError').style.color = 'var(--success)';
-    notify.add('Nuova richiesta registrazione', `${name} (@${username}) ha richiesto di registrarsi.`);
+    const notifList = getNotifs();
+    notifList.unshift({ id: uid(), title: 'Nuova richiesta registrazione', msg: `${name} (@${username}) ha richiesto di registrarsi.`, type: 'info', date: Date.now(), read: false });
+    setNotifs(notifList);
     const pBadge = document.getElementById('pendingBadge');
     if (pBadge) { const c = +pBadge.textContent; pBadge.textContent = c + 1; pBadge.style.display = 'inline'; }
     app.toast('Richiesta di registrazione inviata!', 'success');
