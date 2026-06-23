@@ -48,6 +48,9 @@
         <button class="btn btn-primary btn-block" id="loginBtn" onclick="auth.login()">
           <i class="fas fa-sign-in-alt"></i> Accedi
         </button>
+        <button class="btn btn-ghost btn-block" style="margin-top:0.5rem" onclick="auth.showRegister()">
+          <i class="fas fa-user-plus"></i> Registrati
+        </button>
         <p class="login-error" id="loginError"></p>
       </div>
     </div>
@@ -89,6 +92,7 @@
       </a>
       <a class="nav-item admin-only hidden" data-view="users" onclick="app.navigate('users')">
         <i class="fas fa-users-cog"></i> <span>Utenti</span>
+        <span class="nav-badge hidden" id="pendingBadge" style="background:var(--warning);color:#000">0</span>
       </a>
       <a class="nav-item" data-view="settings" onclick="app.navigate('settings')">
         <i class="fas fa-cog"></i> <span>Impostazioni</span>
@@ -471,6 +475,27 @@
       <button class="modal-close" onclick="app.closeModal('ticketDetailModal')">&times;</button>
     </div>
     <div class="modal-body" id="ticketDetailBody"></div>
+  </div>
+</div>
+
+<!-- Register Modal -->
+<div class="modal-overlay hidden" id="registerModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3><i class="fas fa-user-plus"></i> Registrazione</h3>
+      <button class="modal-close" onclick="app.closeModal('registerModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="registerForm" onsubmit="auth.register(event)">
+        <div class="form-group"><label>Nome Completo</label><input type="text" id="regName" required></div>
+        <div class="form-group"><label>Username</label><input type="text" id="regUsername" required></div>
+        <div class="form-group"><label>Password</label><input type="password" id="regPassword" required></div>
+        <div class="form-group"><label>Conferma Password</label><input type="password" id="regPassword2" required></div>
+        <div class="form-group"><label>Sede</label><select id="regSede"></select></div>
+        <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> Richiedi Registrazione</button>
+      </form>
+      <p class="login-error" id="regError"></p>
+    </div>
   </div>
 </div>
 

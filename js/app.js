@@ -99,6 +99,9 @@ function migrateUsers(list) {
     return u;
   });
 }
+function isApproved(u) {
+  return !u.pending;
+}
 function migrateTickets(list) {
   return list.map(t => {
     if (!t.sede) {
@@ -222,13 +225,54 @@ const auth = {
   stopBgRotation() {
     if (this.bgInterval) { clearInterval(this.bgInterval); this.bgInterval = null; }
   },
+  showRegister() {
+    document.getElementById('regName').value = '';
+    document.getElementById('regUsername').value = '';
+    document.getElementById('regPassword').value = '';
+    document.getElementById('regPassword2').value = '';
+    document.getElementById('regError').textContent = '';
+    const sel = document.getElementById('regSede');
+    sel.innerHTML = '<option value="">Nessuna sede</option>' + getSedi().map(s => `<option value="${s}">${s}</option>`).join('');
+    app.showModal('registerModal');
+  },
+  register(e) {
+    e.preventDefault();
+    const errEl = document.getElementById('regError');
+    const name = document.getElementById('regName').value.trim();
+    const username = document.getElementById('regUsername').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const password2 = document.getElementById('regPassword2').value;
+    const sede = document.getElementById('regSede').value;
+    if (!name || !username || !password) { errEl.textContent = 'Compila tutti i campi.'; return; }
+    if (password !== password2) { errEl.textContent = 'Le password non coincidono.'; return; }
+    if (password.length < 4) { errEl.textContent = 'Password troppo corta (min 4 caratteri).'; return; }
+    const list = getUsers();
+    if (list.find(u => u.username === username)) { errEl.textContent = 'Username già esistente.'; return; }
+    list.push({ id: uid(), username, password, name, role: 'user', sede, avatar: '', pending: true });
+    setUsers(list);
+    app.closeModal('registerModal');
+    document.getElementById('loginError').textContent = 'Registrazione inviata! Attendi l\'approvazione dell\'amministratore.';
+    document.getElementById('loginError').style.color = 'var(--success)';
+    const admin = list.find(u => u.role === 'admin');
+    if (admin) {
+      getNotifs();
+      addNotif('Nuova richiesta registrazione', `${name} (${username}) ha richiesto di registrarsi.`, admin.id, false, 'user-plus');
+      setNotifs(getNotifs());
+    }
+    app.toast('Richiesta di registrazione inviata!', 'success');
+  },
   login() {
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
     const errEl = document.getElementById('loginError');
+    errEl.style.color = '';
     const user = getUserByUsername(username);
     if (!user || user.password !== password) {
       errEl.textContent = 'Username o password non validi.';
+      return;
+    }
+    if (user.pending) {
+      errEl.textContent = 'Registrazione in attesa di approvazione dall\'amministratore.';
       return;
     }
     currentUser = user;
@@ -399,6 +443,18 @@ const app = {
     const openCount = getTickets().filter(t => t.status === 'Aperto').length;
     badge.textContent = openCount;
     badge.style.display = openCount > 0 ? 'inline' : 'none';
+    this.updatePendingBadge();
+  },
+  updatePendingBadge() {
+    const badge = document.getElementById('pendingBadge');
+    if (!badge) return;
+    if (currentUser && currentUser.role === 'admin') {
+      const count = getUsers().filter(u => u.pending).length;
+      badge.textContent = count;
+      badge.style.display = count > 0 ? 'inline' : 'none';
+    } else {
+      badge.style.display = 'none';
+    }
   },
   uploadAvatar(input) {
     const file = input.files && input.files[0];
@@ -1329,8 +1385,29 @@ const users = {
   render() {
     if (currentUser.role !== 'admin') return;
     const list = getUsers();
+    const pending = list.filter(u => u.pending);
+    const approved = list.filter(u => !u.pending);
     const el = document.getElementById('usersList');
-    el.innerHTML = `<div class="users-grid">${list.map(u => `
+    let html = '';
+    if (pending.length) {
+      html += `<h4 style="margin:0 0 0.5rem;color:var(--warning)"><i class="fas fa-clock"></i> Richieste in attesa (${pending.length})</h4>
+      <div class="users-grid" style="margin-bottom:1.5rem">${pending.map(u => `
+        <div class="user-card" style="border-color:var(--warning)">
+          <div class="user-card-avatar">${u.name.split(' ').map(s => s[0]).join('').toUpperCase().slice(0,2)}</div>
+          <div class="user-card-info">
+            <h4>${u.name}</h4>
+            <p><i class="fas fa-user"></i> User &middot; @${u.username}</p>
+            ${u.sede ? `<p style="font-size:0.75rem;color:var(--text-secondary);margin-top:2px"><i class="fas fa-building"></i> ${u.sede}</p>` : ''}
+          </div>
+          <div class="user-card-actions">
+            <button onclick="users.approve('${u.id}')" title="Approva" style="color:var(--success)"><i class="fas fa-check"></i></button>
+            <button onclick="users.deny('${u.id}')" title="Rifiuta" style="color:var(--danger)"><i class="fas fa-times"></i></button>
+          </div>
+        </div>
+      `).join('')}</div>`;
+    }
+    html += `<h4 style="margin:0 0 0.5rem">Utenti registrati (${approved.length})</h4>
+    <div class="users-grid">${approved.map(u => `
       <div class="user-card">
         <div class="user-card-avatar">${u.name.split(' ').map(s => s[0]).join('').toUpperCase().slice(0,2)}</div>
         <div class="user-card-info">
@@ -1344,6 +1421,23 @@ const users = {
         </div>
       </div>
     `).join('')}</div>`;
+    el.innerHTML = html;
+  },
+  approve(id) {
+    const list = getUsers();
+    const u = list.find(x => x.id === id);
+    if (!u) return;
+    delete u.pending;
+    setUsers(list);
+    app.toast('Utente approvato: ' + u.name, 'success');
+    this.render();
+  },
+  deny(id) {
+    if (!app.confirm('Rifiutare questa richiesta di registrazione?')) return;
+    const list = getUsers().filter(x => x.id !== id);
+    setUsers(list);
+    app.toast('Richiesta rifiutata', 'info');
+    this.render();
   },
   openModal(data) {
     document.getElementById('userId').value = data ? data.id : '';
@@ -1383,6 +1477,7 @@ const users = {
       list[idx].role = role;
       list[idx].sede = sede;
       list[idx].avatar = list[idx].avatar || '';
+      delete list[idx].pending;
       app.toast('Utente aggiornato', 'success');
     } else {
       if (!password) { app.toast('Password richiesta', 'error'); return; }
