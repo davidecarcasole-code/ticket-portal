@@ -353,7 +353,7 @@ canvas { width: 100% !important; max-height: 250px; }
 
 /* === MODALS === */
 .modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200;
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2001;
   display: flex; align-items: center; justify-content: center;
   backdrop-filter: blur(4px); animation: fadeIn 0.2s ease;
 }
