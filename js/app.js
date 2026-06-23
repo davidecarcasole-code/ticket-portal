@@ -1,6 +1,19 @@
 (function() {
 'use strict';
 
+initFirebase();
+if (firestoreReady) {
+  loadFromFirestore().then(found => {
+    if (!found) {
+      syncToFirestore('users');
+      syncToFirestore('tickets');
+      syncToFirestore('sedi');
+      syncToFirestore('emailjs');
+    }
+    document.documentElement.setAttribute('data-theme', getData('theme', 'default'));
+  });
+}
+
 if (!CanvasRenderingContext2D.prototype.roundRect) {
   CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, radii) {
     const r = Array.isArray(radii) ? radii : [radii, radii, radii, radii];
@@ -76,7 +89,7 @@ let currentView = 'dashboard';
 function uid() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 5); }
 
 function getData(key, def) { try { const d = localStorage.getItem('ticketflow_' + key); return d ? JSON.parse(d) : def; } catch { return def; } }
-function setData(key, val) { localStorage.setItem('ticketflow_' + key, JSON.stringify(val)); }
+function setData(key, val) { localStorage.setItem('ticketflow_' + key, JSON.stringify(val)); syncToFirestore(key); }
 
 function migrateUsers(list) {
   return list.map(u => {
