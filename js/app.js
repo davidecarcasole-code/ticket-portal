@@ -2,6 +2,21 @@
 'use strict';
 
 initFirebase();
+
+function autoLogin() {
+  const savedId = getData('_login', null);
+  if (savedId) {
+    const user = getUser(savedId);
+    if (user && !user.pending) {
+      currentUser = user;
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('mainApp').classList.remove('hidden');
+      setTimeout(() => app.initApp(), 100);
+      return;
+    }
+  }
+}
+
 if (firestoreReady) {
   loadFromFirestore().then(found => {
     if (!found) {
@@ -12,7 +27,10 @@ if (firestoreReady) {
       syncToFirestore('pmessages');
     }
     document.documentElement.setAttribute('data-theme', getData('theme', 'default'));
+    setTimeout(autoLogin, 200);
   });
+} else {
+  setTimeout(autoLogin, 200);
 }
 
 if (!CanvasRenderingContext2D.prototype.roundRect) {
@@ -273,6 +291,7 @@ const auth = {
       return;
     }
     currentUser = user;
+    setData('_login', user.id);
     errEl.textContent = '';
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('mainApp').classList.remove('hidden');
@@ -282,6 +301,7 @@ const auth = {
     chat.stopPolling();
     pm.stopPolling();
     currentUser = null;
+    setData('_login', null);
     document.getElementById('loginScreen').classList.remove('hidden');
     document.getElementById('mainApp').classList.add('hidden');
     document.getElementById('loginUsername').value = '';
