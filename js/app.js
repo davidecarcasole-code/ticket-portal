@@ -17,6 +17,12 @@ function autoLogin() {
   }
 }
 
+['loginUsername','loginPassword'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    document.getElementById('loginError').textContent = '';
+  });
+});
+
 if (firestoreReady) {
   loadFromFirestore().then(found => {
     if (!found) {
@@ -281,10 +287,10 @@ const auth = {
     app.toast('Richiesta di registrazione inviata!', 'success');
   },
   login() {
+    const errEl = document.getElementById('loginError');
+    errEl.textContent = '';
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
-    const errEl = document.getElementById('loginError');
-    errEl.style.color = '';
     const user = getUserByUsername(username);
     if (!user || user.password !== password) {
       errEl.textContent = 'Username o password non validi.';
