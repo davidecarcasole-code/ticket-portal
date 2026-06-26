@@ -1027,12 +1027,8 @@ const dashboard = {
     app.updateUserUI();
   },
   renderCharts(tickets) {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        this.renderCategoryChart(tickets);
-        this.renderStatusChart(tickets);
-      });
-    });
+    this.renderCategoryChart(tickets);
+    this.renderStatusChart(tickets);
   },
   renderCategoryChart(tickets) {
     const canvas = document.getElementById('categoryChart');
@@ -1196,6 +1192,14 @@ const dashboard = {
         '135deg,#134e5e,#71b280', '135deg,#0f0c29,#302b63', '135deg,#d4145a,#3bbdc7'
       ].map(g => `<button class="bg-preset" style="background:linear-gradient(${g})" onclick="dashboard.setBgGradient('${g}')"></button>`).join('');
     }
+  },
+  goToTickets(status) {
+    app.navigate('tickets');
+    const filterStatus = document.getElementById('filterStatus');
+    if (filterStatus) {
+      filterStatus.value = status || '';
+    }
+    tickets.applyFilters();
   }
 };
 

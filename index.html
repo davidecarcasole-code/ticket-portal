@@ -156,19 +156,19 @@
           <i class="fas fa-chevron-right"></i>
         </div>
         <div class="stats-grid" id="statsGrid">
-          <div class="stat-card stat-totale">
+          <div class="stat-card stat-totale" onclick="dashboard.goToTickets('')">
             <div class="stat-icon"><i class="fas fa-ticket-alt"></i></div>
             <div class="stat-info"><span class="stat-value" id="statTotale">0</span><span class="stat-label">Totale Ticket</span></div>
           </div>
-          <div class="stat-card stat-aperti">
+          <div class="stat-card stat-aperti" onclick="dashboard.goToTickets('Aperto')">
             <div class="stat-icon"><i class="fas fa-folder-open"></i></div>
             <div class="stat-info"><span class="stat-value" id="statAperti">0</span><span class="stat-label">Aperti</span></div>
           </div>
-          <div class="stat-card stat-lavorazione">
+          <div class="stat-card stat-lavorazione" onclick="dashboard.goToTickets('In Lavorazione')">
             <div class="stat-icon"><i class="fas fa-spinner"></i></div>
             <div class="stat-info"><span class="stat-value" id="statLavorazione">0</span><span class="stat-label">In Lavorazione</span></div>
           </div>
-          <div class="stat-card stat-risolti">
+          <div class="stat-card stat-risolti" onclick="dashboard.goToTickets('Risolto')">
             <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
             <div class="stat-info"><span class="stat-value" id="statRisolti">0</span><span class="stat-label">Risolti</span></div>
           </div>

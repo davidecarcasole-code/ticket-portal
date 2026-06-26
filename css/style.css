@@ -271,7 +271,7 @@ textarea { resize: vertical; }
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
 .stat-card {
   display: flex; align-items: center; gap: 1rem; padding: 1.25rem;
-  background: var(--bg-card); border-radius: var(--radius); border: 1px solid var(--border); transition: var(--transition); cursor: default;
+  background: var(--bg-card); border-radius: var(--radius); border: 1px solid var(--border); transition: var(--transition); cursor: pointer;
 }
 .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--shadow); }
 .stat-icon {
