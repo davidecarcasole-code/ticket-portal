@@ -34,6 +34,7 @@
     </div>
     <div class="login-box" id="loginBox">
       <div class="login-form">
+        <form onsubmit="auth.login(); return false">
         <div class="form-group">
           <label><i class="fas fa-user"></i> Username</label>
           <input type="text" id="loginUsername" placeholder="Inserisci username" autocomplete="off">
@@ -42,9 +43,10 @@
           <label><i class="fas fa-lock"></i> Password</label>
           <input type="password" id="loginPassword" placeholder="Inserisci password">
         </div>
-        <button class="btn btn-primary btn-block" id="loginBtn" onclick="auth.login()">
+        <button class="btn btn-primary btn-block" id="loginBtn" type="submit">
           <i class="fas fa-sign-in-alt"></i> Accedi
         </button>
+        </form>
         <button class="btn btn-ghost btn-block" style="margin-top:0.5rem" onclick="auth.showRegister()">
           <i class="fas fa-user-plus"></i> Registrati
         </button>
