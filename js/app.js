@@ -608,21 +608,10 @@ const app = {
     if (label) label.textContent = isDark ? 'Tema scuro attivo' : 'Tema chiaro attivo';
   },
   applyBg() {
-    const bg = getBg();
     const mainContent = document.querySelector('.page-content');
     if (!mainContent) return;
-    if (!bg) {
-      mainContent.style.background = '';
-      mainContent.style.backgroundSize = '';
-      return;
-    }
-    if (bg.startsWith('#')) {
-      mainContent.style.background = bg;
-    } else {
-      mainContent.style.background = `linear-gradient(135deg, ${bg})`;
-    }
-    mainContent.style.backgroundSize = 'cover';
-    mainContent.style.backgroundAttachment = 'fixed';
+    mainContent.style.background = '';
+    mainContent.style.backgroundSize = '';
   },
   showModal(id) { document.getElementById(id).classList.remove('hidden'); },
   closeModal(id) { document.getElementById(id).classList.add('hidden'); },
