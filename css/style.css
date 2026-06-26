@@ -402,7 +402,7 @@ canvas { width: 100% !important; max-height: 250px; }
 
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
-  .sidebar { position: fixed; left: -100%; width: 260px; }
+  .sidebar { position: fixed; left: -100%; width: 260px; transition: left 0.3s cubic-bezier(0.4,0,0.2,1); }
   .sidebar.mobile-open { left: 0; }
   .sidebar.collapsed { left: -100%; }
   .sidebar.collapsed.mobile-open { left: 0; }
@@ -500,3 +500,161 @@ canvas { width: 100% !important; max-height: 250px; }
   font-family: inherit; font-size: 0.9rem; outline: none; max-height: 120px;
 }
 .chat-input:focus { border-color: var(--primary); }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(102,126,234,0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(102,126,234,0); }
+}
+@keyframes shake {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(12deg); }
+  40% { transform: rotate(-12deg); }
+  60% { transform: rotate(8deg); }
+  80% { transform: rotate(-8deg); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes badgePop {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Page transitions */
+.page { animation: fadeIn 0.35s cubic-bezier(0.4,0,0.2,1); }
+.page-header { animation: fadeInUp 0.4s cubic-bezier(0.4,0,0.2,1); }
+
+/* Card hover lift */
+.stat-card, .card, .user-card { transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), box-shadow 0.25s cubic-bezier(0.4,0,0.2,1); }
+.stat-card:hover, .card:hover, .user-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.25); }
+
+/* Ticket items stagger */
+.ticket-item { animation: slideInRight 0.3s cubic-bezier(0.4,0,0.2,1); animation-fill-mode: backwards; }
+.ticket-item:nth-child(1) { animation-delay: 0s; }
+.ticket-item:nth-child(2) { animation-delay: 0.05s; }
+.ticket-item:nth-child(3) { animation-delay: 0.1s; }
+.ticket-item:nth-child(4) { animation-delay: 0.15s; }
+.ticket-item:nth-child(5) { animation-delay: 0.2s; }
+.ticket-item:nth-child(6) { animation-delay: 0.25s; }
+.ticket-item:nth-child(7) { animation-delay: 0.3s; }
+.ticket-item:nth-child(8) { animation-delay: 0.35s; }
+.ticket-item:nth-child(9) { animation-delay: 0.4s; }
+.ticket-item:nth-child(10) { animation-delay: 0.45s; }
+
+/* Modal scale-in */
+.modal-overlay:not(.hidden) .modal { animation: scaleIn 0.25s cubic-bezier(0.4,0,0.2,1); }
+.modal-overlay:not(.hidden) { animation: fadeIn 0.15s ease; }
+
+/* Toast slide-in */
+.toast { animation: slideInRight 0.35s cubic-bezier(0.4,0,0.2,1); }
+
+/* Badge pulse */
+.nav-badge:not(.hidden) { animation: badgePop 0.35s cubic-bezier(0.4,0,0.2,1); }
+
+/* Chat messages entrance */
+.chat-msg { animation: fadeIn 0.25s cubic-bezier(0.4,0,0.2,1); }
+
+/* Button hover effects */
+.btn { position: relative; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s, background 0.3s; }
+.btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(102,126,234,0.3); }
+.btn:active { transform: scale(0.97); }
+.btn-primary::after {
+  content: ''; position: absolute; inset: 0; background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,0.15), transparent 60%);
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+.btn-primary:hover::after { opacity: 1; }
+
+/* Nav item active indicator */
+.nav-item { position: relative; transition: background 0.25s, color 0.25s, padding-left 0.25s; }
+.nav-item.active::before {
+  content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 60%; background: var(--primary); border-radius: 0 3px 3px 0;
+  animation: slideInLeft 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* Chat alert bounce */
+.chat-alert:not(.hidden) { animation: pulse 2s ease-in-out infinite; cursor: pointer; }
+.chat-alert:not(.hidden):hover { animation: none; }
+
+/* Bell shake on new notif */
+.notif-badge:not(.hidden) ~ .fa-bell { animation: shake 0.5s ease-in-out; }
+
+/* Login form entrance */
+.login-box { animation: fadeInUp 0.6s cubic-bezier(0.4,0,0.2,1); }
+
+/* Stat card icons float */
+.stat-icon { animation: float 3s ease-in-out infinite; }
+
+/* Sidebar nav items stagger */
+.sidebar-nav .nav-item { animation: slideInLeft 0.3s cubic-bezier(0.4,0,0.2,1); animation-fill-mode: backwards; }
+.sidebar-nav .nav-item:nth-child(1) { animation-delay: 0.05s; }
+.sidebar-nav .nav-item:nth-child(2) { animation-delay: 0.1s; }
+.sidebar-nav .nav-item:nth-child(3) { animation-delay: 0.15s; }
+.sidebar-nav .nav-item:nth-child(4) { animation-delay: 0.2s; }
+.sidebar-nav .nav-item:nth-child(5) { animation-delay: 0.25s; }
+.sidebar-nav .nav-item:nth-child(6) { animation-delay: 0.3s; }
+.sidebar-nav .nav-item:nth-child(7) { animation-delay: 0.35s; }
+
+/* Comment entrance */
+.comment { animation: slideInLeft 0.25s cubic-bezier(0.4,0,0.2,1); animation-fill-mode: backwards; }
+.comment:nth-child(1) { animation-delay: 0s; }
+.comment:nth-child(2) { animation-delay: 0.05s; }
+.comment:nth-child(3) { animation-delay: 0.1s; }
+.comment:nth-child(4) { animation-delay: 0.15s; }
+.comment:nth-child(5) { animation-delay: 0.2s; }
+
+/* Stats grid entrance */
+.stat-card { animation: fadeInUp 0.4s cubic-bezier(0.4,0,0.2,1); animation-fill-mode: backwards; }
+.stat-card:nth-child(1) { animation-delay: 0.05s; }
+.stat-card:nth-child(2) { animation-delay: 0.1s; }
+.stat-card:nth-child(3) { animation-delay: 0.15s; }
+.stat-card:nth-child(4) { animation-delay: 0.2s; }
+.stat-card:nth-child(5) { animation-delay: 0.25s; }
+.stat-card:nth-child(6) { animation-delay: 0.3s; }
+
+/* Skeleton loading */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s ease-in-out infinite; border-radius: var(--radius-sm);
+}
+
+/* Pulse glow for primary buttons on form submit */
+.btn-primary.loading { animation: pulseGlow 1s ease-in-out infinite; pointer-events: none; }
+
+/* Spin for loading icons */
+.fa-spinner { animation: spinSlow 1s linear infinite; }
