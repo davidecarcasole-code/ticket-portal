@@ -273,7 +273,7 @@ textarea { resize: vertical; }
   display: flex; align-items: center; gap: 1rem; padding: 1.25rem;
   background: var(--bg-card); border-radius: var(--radius); border: 1px solid var(--border); transition: var(--transition); cursor: pointer;
 }
-.stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--shadow); }
+
 .stat-icon {
   width: 50px; height: 50px; border-radius: var(--radius-sm); display: flex;
   align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;
@@ -645,8 +645,7 @@ canvas { width: 100% !important; max-height: 250px; }
 /* Login form entrance */
 .login-box { animation: fadeInUp 0.6s cubic-bezier(0.4,0,0.2,1); }
 
-/* Stat card icons float */
-.stat-icon { animation: float 3s ease-in-out infinite; }
+
 
 /* Sidebar nav items stagger */
 .sidebar-nav .nav-item { animation: slideInLeft 0.3s cubic-bezier(0.4,0,0.2,1); animation-fill-mode: backwards; }
@@ -665,15 +664,6 @@ canvas { width: 100% !important; max-height: 250px; }
 .comment:nth-child(3) { animation-delay: 0.1s; }
 .comment:nth-child(4) { animation-delay: 0.15s; }
 .comment:nth-child(5) { animation-delay: 0.2s; }
-
-/* Stats grid entrance */
-.stat-card { animation: fadeInUp 0.4s cubic-bezier(0.4,0,0.2,1); animation-fill-mode: backwards; }
-.stat-card:nth-child(1) { animation-delay: 0.05s; }
-.stat-card:nth-child(2) { animation-delay: 0.1s; }
-.stat-card:nth-child(3) { animation-delay: 0.15s; }
-.stat-card:nth-child(4) { animation-delay: 0.2s; }
-.stat-card:nth-child(5) { animation-delay: 0.25s; }
-.stat-card:nth-child(6) { animation-delay: 0.3s; }
 
 /* Skeleton loading */
 .skeleton {
