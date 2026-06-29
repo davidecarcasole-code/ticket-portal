@@ -674,8 +674,7 @@ canvas { width: 100% !important; max-height: 250px; }
 /* Pulse glow for primary buttons on form submit */
 .btn-primary.loading { animation: pulseGlow 1s ease-in-out infinite; pointer-events: none; }
 
-/* Spin for loading icons */
-.fa-spinner { animation: spinSlow 1s linear infinite; }
+/* Spin for loading icons - removed per user request */
 
 /* ===== NEON / FLUO EFFECTS ===== */
 @keyframes neonPulse {
